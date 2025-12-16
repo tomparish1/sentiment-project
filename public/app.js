@@ -7,6 +7,11 @@ const resultsDiv = document.getElementById('results');
 const errorDiv = document.getElementById('error');
 const serverStatus = document.getElementById('serverStatus');
 
+// File upload elements
+const fileInput = document.getElementById('fileInput');
+const fileName = document.getElementById('fileName');
+const uploadBtn = document.getElementById('uploadBtn');
+
 const sentimentValue = document.getElementById('sentimentValue');
 const confidenceBar = document.getElementById('confidenceBar');
 const confidenceValue = document.getElementById('confidenceValue');
@@ -20,6 +25,26 @@ const toggleEmotions = document.getElementById('toggleEmotions');
 const emotionOptions = document.getElementById('emotionOptions');
 const emotionResults = document.getElementById('emotionResults');
 const emotionBars = document.getElementById('emotionBars');
+
+// Document metadata elements
+const documentMetadata = document.getElementById('documentMetadata');
+const docTitle = document.getElementById('docTitle');
+const docSourceFile = document.getElementById('docSourceFile');
+const docAuthorsSection = document.getElementById('docAuthorsSection');
+const docAuthors = document.getElementById('docAuthors');
+const docAnalysisDate = document.getElementById('docAnalysisDate');
+const statWords = document.getElementById('statWords');
+const statSentences = document.getElementById('statSentences');
+const statParagraphs = document.getElementById('statParagraphs');
+const statChars = document.getElementById('statChars');
+const statReadTime = document.getElementById('statReadTime');
+const formalityBar = document.getElementById('formalityBar');
+const formalityValue = document.getElementById('formalityValue');
+const dialogicBadge = document.getElementById('dialogicBadge');
+const genreMarkersSection = document.getElementById('genreMarkersSection');
+const genreMarkers = document.getElementById('genreMarkers');
+const speakersSection = document.getElementById('speakersSection');
+const speakersList = document.getElementById('speakersList');
 
 const exampleTexts = [
     "I absolutely loved the new restaurant! The service was impeccable and the food was divine.",
@@ -42,6 +67,10 @@ toggleEmotions.addEventListener('click', () => {
     emotionOptions.classList.toggle('hidden');
     toggleEmotions.textContent = emotionOptions.classList.contains('hidden') ? 'Show All' : 'Hide';
 });
+
+// File upload event listeners
+fileInput.addEventListener('change', handleFileSelect);
+uploadBtn.addEventListener('click', analyzeFile);
 
 textInput.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.key === 'Enter') {
@@ -86,12 +115,20 @@ function loadExample() {
 
 function clearResults() {
     textInput.value = '';
+    fileInput.value = '';
+    fileName.textContent = '';
+    uploadBtn.classList.add('hidden');
     resultsDiv.classList.add('hidden');
     errorDiv.classList.add('hidden');
     textInput.focus();
 }
 
 async function analyzeSentiment() {
+    // If a file is selected, analyze the file instead
+    if (fileInput.files && fileInput.files[0]) {
+        return analyzeFile();
+    }
+
     const text = textInput.value.trim();
 
     if (!text) {
@@ -123,6 +160,60 @@ async function analyzeSentiment() {
         if (!response.ok) {
             const error = await response.json();
             throw new Error(error.error || 'Failed to analyze sentiment');
+        }
+
+        const result = await response.json();
+        displayResults(result);
+    } catch (error) {
+        showError(error.message);
+    } finally {
+        hideLoading();
+        enableButtons();
+    }
+}
+
+function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (file) {
+        fileName.textContent = file.name;
+        uploadBtn.classList.remove('hidden');
+    } else {
+        fileName.textContent = '';
+        uploadBtn.classList.add('hidden');
+    }
+}
+
+async function analyzeFile() {
+    const file = fileInput.files[0];
+    if (!file) {
+        showError('Please select a file first.');
+        return;
+    }
+
+    // Get selected emotions
+    const selectedEmotions = Array.from(document.querySelectorAll('.emotion-checkbox:checked'))
+        .map(checkbox => checkbox.value);
+
+    hideError();
+    hideResults();
+    showLoading();
+    disableButtons();
+
+    try {
+        const formData = new FormData();
+        formData.append('file', file);
+        if (selectedEmotions.length > 0) {
+            formData.append('emotions', selectedEmotions.join(','));
+        }
+
+        const response = await fetch('/api/analyze/file', {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Failed to analyze file');
         }
 
         const result = await response.json();
@@ -170,6 +261,13 @@ function displayResults(result) {
         displayEmotions(result.emotions);
     } else {
         emotionResults.classList.add('hidden');
+    }
+
+    // Display document metadata if present
+    if (result.document) {
+        displayDocumentMetadata(result.document);
+    } else {
+        documentMetadata.classList.add('hidden');
     }
 
     showResults();
@@ -231,6 +329,70 @@ function displayEmotions(emotions) {
     emotionResults.classList.remove('hidden');
 }
 
+function displayDocumentMetadata(doc) {
+    // Header info
+    docTitle.textContent = doc.header.title;
+    docSourceFile.textContent = doc.header.sourceFile;
+    docAnalysisDate.textContent = doc.header.analysisDate;
+
+    // Authors/Speakers
+    if (doc.header.authors && doc.header.authors.length > 0) {
+        docAuthors.textContent = doc.header.authors.join(', ');
+        docAuthorsSection.classList.remove('hidden');
+    } else {
+        docAuthorsSection.classList.add('hidden');
+    }
+
+    // Statistics
+    statWords.textContent = doc.statistics.wordCount.toLocaleString();
+    statSentences.textContent = doc.statistics.sentenceCount.toLocaleString();
+    statParagraphs.textContent = doc.statistics.paragraphCount.toLocaleString();
+    statChars.textContent = doc.statistics.characterCount.toLocaleString();
+    statReadTime.textContent = doc.statistics.estimatedReadingTimeMinutes;
+
+    // Characteristics
+    const formalityPercent = Math.round(doc.characteristics.formalityScore * 100);
+    formalityBar.style.width = `${formalityPercent}%`;
+    formalityValue.textContent = formalityPercent >= 70 ? 'Formal' : formalityPercent >= 40 ? 'Neutral' : 'Informal';
+
+    // Dialogic badge
+    if (doc.characteristics.isDialogic) {
+        dialogicBadge.classList.remove('hidden');
+    } else {
+        dialogicBadge.classList.add('hidden');
+    }
+
+    // Genre markers
+    if (doc.characteristics.genreMarkers && doc.characteristics.genreMarkers.length > 0) {
+        genreMarkers.innerHTML = '';
+        doc.characteristics.genreMarkers.forEach(marker => {
+            const badge = document.createElement('span');
+            badge.className = 'px-2 py-1 bg-amber-100 text-amber-800 text-xs font-medium rounded';
+            badge.textContent = `${marker.genre} (${Math.round(marker.score * 100)}%)`;
+            genreMarkers.appendChild(badge);
+        });
+        genreMarkersSection.classList.remove('hidden');
+    } else {
+        genreMarkersSection.classList.add('hidden');
+    }
+
+    // Speakers list
+    if (doc.characteristics.speakers && doc.characteristics.speakers.length > 0) {
+        speakersList.innerHTML = '';
+        doc.characteristics.speakers.forEach(speaker => {
+            const badge = document.createElement('span');
+            badge.className = 'px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded';
+            badge.textContent = speaker;
+            speakersList.appendChild(badge);
+        });
+        speakersSection.classList.remove('hidden');
+    } else {
+        speakersSection.classList.add('hidden');
+    }
+
+    documentMetadata.classList.remove('hidden');
+}
+
 function showLoading() {
     loadingIndicator.classList.remove('hidden');
 }
@@ -260,16 +422,20 @@ function disableButtons() {
     analyzeBtn.disabled = true;
     clearBtn.disabled = true;
     loadExampleBtn.disabled = true;
+    uploadBtn.disabled = true;
     analyzeBtn.classList.add('opacity-50', 'cursor-not-allowed');
     clearBtn.classList.add('opacity-50', 'cursor-not-allowed');
     loadExampleBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    uploadBtn.classList.add('opacity-50', 'cursor-not-allowed');
 }
 
 function enableButtons() {
     analyzeBtn.disabled = false;
     clearBtn.disabled = false;
     loadExampleBtn.disabled = false;
+    uploadBtn.disabled = false;
     analyzeBtn.classList.remove('opacity-50', 'cursor-not-allowed');
     clearBtn.classList.remove('opacity-50', 'cursor-not-allowed');
     loadExampleBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+    uploadBtn.classList.remove('opacity-50', 'cursor-not-allowed');
 }

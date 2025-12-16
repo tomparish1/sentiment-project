@@ -31,7 +31,9 @@
                     <span class="text-xs font-semibold text-green-700">Server Online</span>
                 </div>
             </div>
-            <p class="text-slate-600 text-sm">v0.3.0 - Powered by Claude API</p>
+            <p class="text-slate-600 text-sm">
+                <a href="/roadmap.html" class="text-blue-600 hover:text-blue-700 font-medium">v0.5.0</a> - Powered by Claude API
+            </p>
         </header>
 
         <!-- Main Card -->
@@ -100,6 +102,22 @@
                     </div>
                 </div>
 
+                <!-- File Upload -->
+                <div class="mt-4 p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                    <label class="text-sm font-semibold text-slate-700 block mb-2">Or upload a document:</label>
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <label class="cursor-pointer bg-white border-2 border-dashed border-slate-300 hover:border-blue-400 rounded-lg px-4 py-2 transition-colors">
+                            <input type="file" id="fileInput" accept=".txt,.md,.markdown,.pdf,.docx,text/plain,text/markdown,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" class="hidden">
+                            <span class="text-slate-600 text-sm">Choose file</span>
+                        </label>
+                        <span id="fileName" class="text-sm text-slate-500 italic"></span>
+                        <button id="uploadBtn" class="hidden bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-2 px-4 rounded-lg shadow transition-all duration-200">
+                            Analyze File
+                        </button>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2">Supported: .txt, .md, .pdf, .docx (max 20MB)</p>
+                </div>
+
                 <div class="flex flex-wrap gap-3 mt-4">
                     <button id="analyzeBtn" class="flex-1 min-w-[200px] bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
                         Analyze Sentiment
@@ -151,6 +169,86 @@
                     <div id="emotionBars" class="space-y-3"></div>
                 </div>
 
+                <!-- Document Metadata (for file uploads) -->
+                <div id="documentMetadata" class="hidden bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-6 border border-amber-200">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">Document Information</h3>
+
+                    <!-- Header Info -->
+                    <div class="grid md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <span class="text-xs font-semibold text-slate-500 uppercase">Title</span>
+                            <p id="docTitle" class="text-slate-800 font-medium"></p>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-slate-500 uppercase">Source File</span>
+                            <p id="docSourceFile" class="text-slate-800 font-medium"></p>
+                        </div>
+                    </div>
+                    <div id="docAuthorsSection" class="hidden mb-4">
+                        <span class="text-xs font-semibold text-slate-500 uppercase">Authors / Speakers</span>
+                        <p id="docAuthors" class="text-slate-800"></p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mb-4 text-xs text-slate-500">
+                        <div>Analysis Date: <span id="docAnalysisDate" class="text-slate-700"></span></div>
+                    </div>
+
+                    <!-- Statistics -->
+                    <div class="border-t border-amber-200 pt-4 mb-4">
+                        <span class="text-xs font-semibold text-slate-500 uppercase">Statistics</span>
+                        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mt-2">
+                            <div class="bg-white/50 rounded-lg p-2 text-center">
+                                <div id="statWords" class="text-lg font-bold text-amber-700"></div>
+                                <div class="text-xs text-slate-500">Words</div>
+                            </div>
+                            <div class="bg-white/50 rounded-lg p-2 text-center">
+                                <div id="statSentences" class="text-lg font-bold text-amber-700"></div>
+                                <div class="text-xs text-slate-500">Sentences</div>
+                            </div>
+                            <div class="bg-white/50 rounded-lg p-2 text-center">
+                                <div id="statParagraphs" class="text-lg font-bold text-amber-700"></div>
+                                <div class="text-xs text-slate-500">Paragraphs</div>
+                            </div>
+                            <div class="bg-white/50 rounded-lg p-2 text-center">
+                                <div id="statChars" class="text-lg font-bold text-amber-700"></div>
+                                <div class="text-xs text-slate-500">Characters</div>
+                            </div>
+                            <div class="bg-white/50 rounded-lg p-2 text-center">
+                                <div id="statReadTime" class="text-lg font-bold text-amber-700"></div>
+                                <div class="text-xs text-slate-500">Min Read</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Characteristics -->
+                    <div class="border-t border-amber-200 pt-4">
+                        <span class="text-xs font-semibold text-slate-500 uppercase">Characteristics</span>
+                        <div class="mt-2 space-y-3">
+                            <div class="flex items-center gap-4">
+                                <div class="flex-1">
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span class="text-slate-600">Formality</span>
+                                        <span id="formalityValue" class="font-medium text-slate-700"></span>
+                                    </div>
+                                    <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
+                                        <div id="formalityBar" class="h-full bg-gradient-to-r from-amber-400 to-orange-500 transition-all"></div>
+                                    </div>
+                                </div>
+                                <div id="dialogicBadge" class="hidden px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded">
+                                    Multi-Speaker
+                                </div>
+                            </div>
+                            <div id="genreMarkersSection" class="hidden">
+                                <span class="text-xs text-slate-500">Genre Markers</span>
+                                <div id="genreMarkers" class="flex flex-wrap gap-2 mt-1"></div>
+                            </div>
+                            <div id="speakersSection" class="hidden">
+                                <span class="text-xs text-slate-500">Detected Speakers</span>
+                                <div id="speakersList" class="flex flex-wrap gap-2 mt-1"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Key Indicators Card -->
                 <div class="bg-white rounded-xl p-6 border border-slate-200">
                     <h3 class="text-lg font-bold text-slate-800 mb-3">Key Indicators</h3>
@@ -179,7 +277,7 @@
 
         <!-- Footer -->
         <footer class="text-center mt-8 text-slate-600 text-sm">
-            <p>Powered by Claude API | <a href="#" class="text-blue-600 hover:text-blue-700 underline">View Roadmap</a></p>
+            <p>Powered by Claude API | <a href="/roadmap.html" class="text-blue-600 hover:text-blue-700 underline">View Roadmap</a></p>
         </footer>
     </div>
 

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roadmap - Sentiment Analyzer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header -->
+        <header class="mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-slate-800">Sentiment Analyzer</h1>
+                    <p class="text-slate-600">Project Status & Roadmap</p>
+                </div>
+                <a href="/" class="text-blue-600 hover:text-blue-700 font-medium">&larr; Back to App</a>
+            </div>
+        </header>
+
+        <!-- Version Info -->
+        <section class="bg-white rounded-xl shadow-lg border border-slate-200 p-6 mb-6">
+            <div class="flex items-center gap-4">
+                <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                    <span class="text-white text-2xl font-bold">v0.5</span>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">Current Version: 0.5.0</h2>
+                    <p class="text-slate-600">Last updated: December 2024</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Changes -->
+        <section class="bg-white rounded-xl shadow-lg border border-slate-200 p-6 mb-6">
+            <h2 class="text-xl font-bold text-slate-800 mb-4">Recent Changes</h2>
+
+            <div class="space-y-4">
+                <!-- v0.5.0 -->
+                <div class="border-l-4 border-indigo-500 pl-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-sm font-bold text-indigo-600">v0.5.0</span>
+                        <span class="text-xs text-slate-500">December 2024</span>
+                        <span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs font-medium rounded">Latest</span>
+                    </div>
+                    <ul class="text-sm text-slate-700 space-y-1">
+                        <li>+ Increased file upload limit to 20MB</li>
+                        <li>+ Increased text extraction limit to 200,000 characters</li>
+                        <li>+ Added Project Status & Roadmap page</li>
+                        <li>+ Version link in header for quick access to roadmap</li>
+                        <li>+ Fixed PDF parsing with stable pdf-parse v1.1.1</li>
+                        <li>+ Smart analyze button (auto-detects file vs text input)</li>
+                    </ul>
+                </div>
+
+                <!-- v0.4.0 -->
+                <div class="border-l-4 border-blue-500 pl-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-sm font-bold text-blue-600">v0.4.0</span>
+                        <span class="text-xs text-slate-500">December 2024</span>
+                    </div>
+                    <ul class="text-sm text-slate-700 space-y-1">
+                        <li>+ Multi-format file upload support (PDF, Word, Markdown, TXT)</li>
+                        <li>+ Document metadata extraction (title, authors, statistics)</li>
+                        <li>+ Genre detection and formality scoring</li>
+                        <li>+ Speaker/author detection for transcripts</li>
+                        <li>+ Reading time estimation</li>
+                    </ul>
+                </div>
+
+                <!-- v0.3.0 -->
+                <div class="border-l-4 border-green-500 pl-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-sm font-bold text-green-600">v0.3.0</span>
+                        <span class="text-xs text-slate-500">December 2024</span>
+                    </div>
+                    <ul class="text-sm text-slate-700 space-y-1">
+                        <li>+ Emotion analysis with 10 emotion types</li>
+                        <li>+ Configurable emotion selection</li>
+                        <li>+ Visual emotion intensity bars</li>
+                        <li>+ Server health monitoring</li>
+                        <li>+ Example text loading</li>
+                    </ul>
+                </div>
+
+                <!-- v0.2.0 -->
+                <div class="border-l-4 border-amber-500 pl-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-sm font-bold text-amber-600">v0.2.0</span>
+                        <span class="text-xs text-slate-500">December 2024</span>
+                    </div>
+                    <ul class="text-sm text-slate-700 space-y-1">
+                        <li>+ Claude API integration</li>
+                        <li>+ Confidence scoring</li>
+                        <li>+ Key indicators extraction</li>
+                        <li>+ Detailed explanations</li>
+                    </ul>
+                </div>
+
+                <!-- v0.1.0 -->
+                <div class="border-l-4 border-slate-400 pl-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-sm font-bold text-slate-600">v0.1.0</span>
+                        <span class="text-xs text-slate-500">December 2024</span>
+                    </div>
+                    <ul class="text-sm text-slate-700 space-y-1">
+                        <li>+ Initial project setup</li>
+                        <li>+ Basic sentiment analysis (positive/negative/neutral)</li>
+                        <li>+ Express server with TypeScript</li>
+                        <li>+ Tailwind CSS UI</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Roadmap -->
+        <section class="bg-white rounded-xl shadow-lg border border-slate-200 p-6 mb-6">
+            <h2 class="text-xl font-bold text-slate-800 mb-4">Product Roadmap</h2>
+
+            <div class="space-y-6">
+                <!-- Next Up -->
+                <div>
+                    <h3 class="text-sm font-bold text-emerald-600 uppercase tracking-wide mb-3">Next Up</h3>
+                    <div class="space-y-2">
+                        <div class="flex items-start gap-3 p-3 bg-emerald-50 rounded-lg border border-emerald-200">
+                            <div class="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold">1</div>
+                            <div>
+                                <p class="font-medium text-slate-800">Batch Analysis</p>
+                                <p class="text-sm text-slate-600">Analyze multiple documents at once with combined reports</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-3 bg-emerald-50 rounded-lg border border-emerald-200">
+                            <div class="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold">2</div>
+                            <div>
+                                <p class="font-medium text-slate-800">Export Results</p>
+                                <p class="text-sm text-slate-600">Download analysis as PDF, JSON, or CSV</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-3 bg-emerald-50 rounded-lg border border-emerald-200">
+                            <div class="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold">3</div>
+                            <div>
+                                <p class="font-medium text-slate-800">Analysis History</p>
+                                <p class="text-sm text-slate-600">Save and revisit past analyses (local storage)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Planned -->
+                <div>
+                    <h3 class="text-sm font-bold text-blue-600 uppercase tracking-wide mb-3">Planned</h3>
+                    <div class="space-y-2">
+                        <div class="flex items-start gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                            <div class="w-2 h-2 rounded-full bg-blue-500 mt-2"></div>
+                            <div>
+                                <p class="font-medium text-slate-800">Comparative Analysis</p>
+                                <p class="text-sm text-slate-600">Compare sentiment across multiple texts side-by-side</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                            <div class="w-2 h-2 rounded-full bg-blue-500 mt-2"></div>
+                            <div>
+                                <p class="font-medium text-slate-800">Sentiment Trends</p>
+                                <p class="text-sm text-slate-600">Track sentiment changes over time for recurring analyses</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                            <div class="w-2 h-2 rounded-full bg-blue-500 mt-2"></div>
+                            <div>
+                                <p class="font-medium text-slate-800">Custom Emotion Sets</p>
+                                <p class="text-sm text-slate-600">Define custom emotions beyond the default 10</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                            <div class="w-2 h-2 rounded-full bg-blue-500 mt-2"></div>
+                            <div>
+                                <p class="font-medium text-slate-800">API Keys Management</p>
+                                <p class="text-sm text-slate-600">User-provided API keys for personal usage</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Future Ideas -->
+                <div>
+                    <h3 class="text-sm font-bold text-purple-600 uppercase tracking-wide mb-3">Future Ideas</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">URL Analysis</span>
+                        <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">Social Media Integration</span>
+                        <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">Multi-language Support</span>
+                        <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">Sentiment Alerts</span>
+                        <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">Team Collaboration</span>
+                        <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">Visualization Dashboard</span>
+                        <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">Browser Extension</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tech Stack -->
+        <section class="bg-white rounded-xl shadow-lg border border-slate-200 p-6">
+            <h2 class="text-xl font-bold text-slate-800 mb-4">Tech Stack</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="text-center p-3 bg-slate-50 rounded-lg">
+                    <p class="font-bold text-slate-800">Node.js</p>
+                    <p class="text-xs text-slate-500">Runtime</p>
+                </div>
+                <div class="text-center p-3 bg-slate-50 rounded-lg">
+                    <p class="font-bold text-slate-800">Express</p>
+                    <p class="text-xs text-slate-500">Server</p>
+                </div>
+                <div class="text-center p-3 bg-slate-50 rounded-lg">
+                    <p class="font-bold text-slate-800">TypeScript</p>
+                    <p class="text-xs text-slate-500">Language</p>
+                </div>
+                <div class="text-center p-3 bg-slate-50 rounded-lg">
+                    <p class="font-bold text-slate-800">Claude API</p>
+                    <p class="text-xs text-slate-500">AI Engine</p>
+                </div>
+                <div class="text-center p-3 bg-slate-50 rounded-lg">
+                    <p class="font-bold text-slate-800">Tailwind CSS</p>
+                    <p class="text-xs text-slate-500">Styling</p>
+                </div>
+                <div class="text-center p-3 bg-slate-50 rounded-lg">
+                    <p class="font-bold text-slate-800">Zod</p>
+                    <p class="text-xs text-slate-500">Validation</p>
+                </div>
+                <div class="text-center p-3 bg-slate-50 rounded-lg">
+                    <p class="font-bold text-slate-800">Multer</p>
+                    <p class="text-xs text-slate-500">File Upload</p>
+                </div>
+                <div class="text-center p-3 bg-slate-50 rounded-lg">
+                    <p class="font-bold text-slate-800">Swagger</p>
+                    <p class="text-xs text-slate-500">API Docs</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center mt-8 text-slate-500 text-sm">
+            <p>Sentiment Analyzer &copy; 2024</p>
+        </footer>
+    </div>
+</body>
+</html>
