@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Writer's Portal - Sentiment & Rhetoric Analyzer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563eb',
+                        secondary: '#64748b',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+    <div class="container mx-auto px-4 py-6 max-w-6xl">
+        <!-- Header -->
+        <header class="text-center mb-6">
+            <div class="flex items-center justify-center gap-3 mb-2">
+                <h1 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                    Writer's Portal
+                </h1>
+                <div id="serverStatus" class="flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 border border-green-300">
+                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span class="text-xs font-semibold text-green-700">Online</span>
+                </div>
+            </div>
+            <p class="text-slate-600 text-sm">
+                Content Analysis | Rhetoric Detection | Skills & Agents
+            </p>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="mb-6">
+            <div class="flex border-b border-slate-200">
+                <button class="tab-btn active px-6 py-3 font-semibold text-blue-600 border-b-2 border-blue-600" data-tab="analysis">
+                    Content Analysis
+                </button>
+                <button class="tab-btn px-6 py-3 font-semibold text-slate-500 hover:text-slate-700" data-tab="skills">
+                    Skills Explorer
+                </button>
+                <button class="tab-btn px-6 py-3 font-semibold text-slate-500 hover:text-slate-700" data-tab="exemplars">
+                    Exemplar Manager
+                </button>
+            </div>
+        </nav>
+
+        <!-- Tab Content -->
+        <main>
+            <!-- Content Analysis Tab -->
+            <div id="tab-analysis" class="tab-content">
+                <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+                    <!-- Input Section -->
+                    <div class="p-6 bg-gradient-to-b from-white to-slate-50">
+                        <h2 class="text-xl font-bold text-slate-800 mb-4">Comprehensive Content Analysis</h2>
+
+                        <!-- Text Input -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Enter text or upload a document:</label>
+                            <textarea
+                                id="analysisText"
+                                placeholder="Paste your text here for analysis..."
+                                rows="6"
+                                class="w-full px-4 py-3 border-2 border-slate-300 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all resize-none text-slate-700"
+                            ></textarea>
+                        </div>
+
+                        <!-- File Upload -->
+                        <div class="mb-4 p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                            <label class="cursor-pointer bg-white border-2 border-dashed border-slate-300 hover:border-blue-400 rounded-lg px-4 py-2 transition-colors inline-block">
+                                <input type="file" id="analysisFile" accept=".txt,.md,.pdf,.docx" class="hidden">
+                                <span class="text-slate-600 text-sm">Choose file</span>
+                            </label>
+                            <span id="analysisFileName" class="ml-3 text-sm text-slate-500"></span>
+                        </div>
+
+                        <!-- Analysis Options -->
+                        <div class="grid md:grid-cols-2 gap-4 mb-4">
+                            <div class="p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                                <label class="text-sm font-semibold text-slate-700 block mb-2">Agent Type</label>
+                                <select id="agentType" class="w-full px-3 py-2 border border-slate-300 rounded-lg">
+                                    <option value="content-analysis">Content Analysis</option>
+                                    <option value="research-analyst">Research Analyst</option>
+                                </select>
+                            </div>
+                            <div class="p-4 bg-purple-50 border border-purple-200 rounded-xl">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="forceRhetoric" class="w-4 h-4 text-purple-600 rounded">
+                                    <span class="text-sm font-medium text-slate-700">Force Rhetoric Analysis</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer mt-2">
+                                    <input type="checkbox" id="includeQuotes" checked class="w-4 h-4 text-purple-600 rounded">
+                                    <span class="text-sm font-medium text-slate-700">Include Notable Quotes</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Analyze Button -->
+                        <button id="runAnalysis" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
+                            Run Analysis
+                        </button>
+                    </div>
+
+                    <!-- Workflow Progress -->
+                    <div id="workflowProgress" class="hidden p-6 bg-slate-50 border-t border-slate-200">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4">Workflow Progress</h3>
+                        <div id="workflowSteps" class="space-y-2"></div>
+                    </div>
+
+                    <!-- Results Section -->
+                    <div id="analysisResults" class="hidden p-6 space-y-4">
+                        <!-- Synthesis Summary -->
+                        <div id="synthesisSummary" class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
+                            <h3 class="text-lg font-bold text-slate-800 mb-3">Summary</h3>
+                            <p id="synthesisSummaryText" class="text-slate-700"></p>
+                            <div id="keyFindings" class="mt-4"></div>
+                        </div>
+
+                        <!-- Document Info -->
+                        <div id="documentInfo" class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-6 border border-amber-200">
+                            <h3 class="text-lg font-bold text-slate-800 mb-3">Document Information</h3>
+                            <div id="documentStats" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div>
+                        </div>
+
+                        <!-- Rhetoric Results -->
+                        <div id="rhetoricResults" class="hidden bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-200">
+                            <h3 class="text-lg font-bold text-slate-800 mb-3">Rhetoric Analysis</h3>
+                            <p id="rhetoricNarrative" class="text-slate-700 mb-4"></p>
+                            <div id="rhetoricMoves" class="space-y-2"></div>
+                            <div id="classifiedSegments" class="mt-4 space-y-2"></div>
+                        </div>
+
+                        <!-- Speaker Analysis (for transcripts) -->
+                        <div id="speakerResults" class="hidden bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-6 border border-blue-200">
+                            <h3 class="text-lg font-bold text-slate-800 mb-3">Speaker Analysis</h3>
+                            <div id="speakerList" class="space-y-3"></div>
+                            <div id="speakerComparison" class="mt-4 p-4 bg-white/50 rounded-lg"></div>
+                        </div>
+
+                        <!-- Research Report -->
+                        <div id="researchReport" class="hidden bg-white rounded-xl p-6 border border-slate-200">
+                            <h3 class="text-lg font-bold text-slate-800 mb-3">Research Report</h3>
+                            <div id="reportContent" class="prose prose-slate max-w-none"></div>
+                        </div>
+                    </div>
+
+                    <!-- Error Section -->
+                    <div id="analysisError" class="hidden p-6 m-6 bg-red-50 border-l-4 border-red-500 rounded-lg">
+                        <h3 class="text-lg font-bold text-red-800 mb-2">Error</h3>
+                        <p id="analysisErrorMessage" class="text-red-700"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Skills Explorer Tab -->
+            <div id="tab-skills" class="tab-content hidden">
+                <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden p-6">
+                    <h2 class="text-xl font-bold text-slate-800 mb-4">Available Skills</h2>
+                    <div id="skillsList" class="grid md:grid-cols-2 gap-4"></div>
+
+                    <!-- Skill Invocation -->
+                    <div id="skillInvoke" class="hidden mt-6 p-6 bg-slate-50 rounded-xl border border-slate-200">
+                        <h3 id="skillInvokeName" class="text-lg font-bold text-slate-800 mb-4"></h3>
+                        <div id="skillInvokeForm" class="space-y-4"></div>
+                        <button id="invokeSkillBtn" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg">
+                            Invoke Skill
+                        </button>
+                        <div id="skillResult" class="hidden mt-4 p-4 bg-slate-900 rounded-lg">
+                            <pre id="skillResultJson" class="text-sm text-slate-300 overflow-x-auto"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exemplar Manager Tab -->
+            <div id="tab-exemplars" class="tab-content hidden">
+                <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold text-slate-800">Exemplar Collection</h2>
+                        <button id="addExemplarBtn" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg">
+                            + Add Exemplar
+                        </button>
+                    </div>
+
+                    <!-- Exemplar Stats -->
+                    <div id="exemplarStats" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6"></div>
+
+                    <!-- Exemplar List -->
+                    <div id="exemplarList" class="space-y-3"></div>
+
+                    <!-- Add Exemplar Form -->
+                    <div id="addExemplarForm" class="hidden mt-6 p-6 bg-green-50 rounded-xl border border-green-200">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4">Add New Exemplar</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Text</label>
+                                <textarea id="newExemplarText" rows="3" class="w-full px-3 py-2 border border-slate-300 rounded-lg" placeholder="Enter the exemplar text..."></textarea>
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1">Move Type</label>
+                                    <input id="newExemplarMoveType" type="text" class="w-full px-3 py-2 border border-slate-300 rounded-lg" placeholder="e.g., concession">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1">Move Category</label>
+                                    <input id="newExemplarCategory" type="text" class="w-full px-3 py-2 border border-slate-300 rounded-lg" placeholder="e.g., dialogic">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Notes (optional)</label>
+                                <input id="newExemplarNotes" type="text" class="w-full px-3 py-2 border border-slate-300 rounded-lg" placeholder="Additional notes...">
+                            </div>
+                            <div class="flex gap-3">
+                                <button id="saveExemplarBtn" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-lg">
+                                    Save Exemplar
+                                </button>
+                                <button id="cancelExemplarBtn" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-6 rounded-lg">
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="text-center mt-8 text-slate-600 text-sm">
+            <p>
+                <a href="/" class="text-blue-600 hover:text-blue-700 underline">Sentiment Analyzer</a> |
+                <a href="/roadmap.html" class="text-blue-600 hover:text-blue-700 underline">Roadmap</a> |
+                <a href="/api/docs" class="text-blue-600 hover:text-blue-700 underline">API Docs</a>
+            </p>
+        </footer>
+    </div>
+
+    <script src="portal.js"></script>
+</body>
+</html>

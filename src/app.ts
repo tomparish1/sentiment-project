@@ -3,6 +3,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import swaggerUi from 'swagger-ui-express';
 import { apiRoutes } from './api/routes.js';
+import { skillRoutes } from './api/skillRoutes.js';
+import { agentRoutes } from './api/agentRoutes.js';
 import { swaggerSpec } from './api/swagger.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import { requestLogger } from './middleware/requestLogger.js';
@@ -26,6 +28,8 @@ export function createApp() {
 
   // API Routes
   app.use('/api', apiRoutes);
+  app.use('/api/skills', skillRoutes);
+  app.use('/api/agents', agentRoutes);
 
   // Static files (for production - in dev, Vite serves these)
   const publicPath = path.join(__dirname, '..', 'public');

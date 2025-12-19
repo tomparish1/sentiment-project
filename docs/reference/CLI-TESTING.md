@@ -6,8 +6,8 @@ Documentation of all tests in this project.
 
 ## Test Framework
 
-**Framework:** [e.g., Jest, Vitest, Mocha]
-**Configuration:** [e.g., jest.config.js]
+**Framework:** Vitest
+**Configuration:** vitest.config.ts (or vite.config.ts)
 
 ---
 
@@ -22,6 +22,15 @@ Documentation of all tests in this project.
 
 | File | Description | Key Test Areas |
 |------|-------------|----------------|
+| tests/api/skills.test.ts | Skills API endpoints | List skills, get metadata, invoke skills, file parsing |
+| tests/api/agents.test.ts | Agents API endpoints | List agents, get metadata, execute agents |
+
+### Script Tests
+
+| File | Description | Key Test Areas |
+|------|-------------|----------------|
+| scripts/test-skills.ts | Phase 2 skills validation | text-segmenter, embedding-engine, exemplar-store, rhetoric-analyzer |
+| scripts/test-agents.ts | Agent framework validation | Registry, content-analysis, research-analyst, workflow context |
 
 ### E2E Tests
 
@@ -36,11 +45,15 @@ Documentation of all tests in this project.
 # Run all tests
 npm test
 
-# Run with coverage
-npm run test:coverage
+# Run with watch mode
+npx vitest
 
 # Run specific test file
-npm test -- path/to/test.spec.ts
+npx vitest tests/api/skills.test.ts
+
+# Run script tests
+npx tsx scripts/test-skills.ts
+npx tsx scripts/test-agents.ts
 ```
 
 ---
@@ -52,6 +65,6 @@ npm test -- path/to/test.spec.ts
 
 ---
 
-**Total Test Count:** 0
+**Total Test Count:** 13 (7 skills + 6 agents integration tests)
 
-*Last updated: [Date]*
+*Last updated: 2025-12-18*

@@ -19,6 +19,9 @@ Quick reference for commonly used CLI commands.
 
 | Command | Description |
 |---------|-------------|
+| `npm test` | Run all Vitest tests |
+| `npx tsx scripts/test-skills.ts` | Test Phase 2 skills |
+| `npx tsx scripts/test-agents.ts` | Test agent framework |
 
 ## Other
 

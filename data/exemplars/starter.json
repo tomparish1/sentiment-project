@@ -1,0 +1,179 @@
+{
+  "version": "1.0",
+  "description": "Starter exemplar collection for rhetoric analysis",
+  "savedAt": "2024-12-18T00:00:00.000Z",
+  "exemplarCount": 20,
+  "moveTypeCounts": {
+    "concession": 4,
+    "preemption": 2,
+    "contrast": 3,
+    "ethos": 2,
+    "logos": 2,
+    "kairos": 2,
+    "amplification": 2,
+    "diminution": 1,
+    "restatement": 2
+  },
+  "exemplars": [
+    {
+      "id": "starter-001",
+      "text": "Admittedly, there's research supporting this view.",
+      "moveType": "concession",
+      "moveCategory": "dialogic",
+      "confidence": "high",
+      "notes": "Classic concession marker with 'admittedly'"
+    },
+    {
+      "id": "starter-002",
+      "text": "To be fair, critics have raised valid points.",
+      "moveType": "concession",
+      "moveCategory": "dialogic",
+      "confidence": "high",
+      "notes": "'To be fair' signals acknowledgment of opposing view"
+    },
+    {
+      "id": "starter-003",
+      "text": "I grant that this approach has its limitations.",
+      "moveType": "concession",
+      "moveCategory": "dialogic",
+      "confidence": "high",
+      "notes": "'I grant' explicitly concedes a point"
+    },
+    {
+      "id": "starter-004",
+      "text": "While there is some merit to this objection, the overall argument remains sound.",
+      "moveType": "concession",
+      "moveCategory": "dialogic",
+      "confidence": "high",
+      "notes": "Concession followed by counter-point"
+    },
+    {
+      "id": "starter-005",
+      "text": "Some might argue that this approach is too simplistic.",
+      "moveType": "preemption",
+      "moveCategory": "dialogic",
+      "confidence": "high",
+      "notes": "Anticipates and raises potential objection"
+    },
+    {
+      "id": "starter-006",
+      "text": "Critics will no doubt object that we've oversimplified the issue.",
+      "moveType": "preemption",
+      "moveCategory": "dialogic",
+      "confidence": "high",
+      "notes": "Preemptively addresses expected criticism"
+    },
+    {
+      "id": "starter-007",
+      "text": "However, what we're seeing suggests a different story.",
+      "moveType": "contrast",
+      "moveCategory": "structural",
+      "confidence": "high",
+      "notes": "'However' pivots to counter-point"
+    },
+    {
+      "id": "starter-008",
+      "text": "But even so, the evidence points in another direction.",
+      "moveType": "contrast",
+      "moveCategory": "structural",
+      "confidence": "high",
+      "notes": "'But even so' acknowledges then pivots"
+    },
+    {
+      "id": "starter-009",
+      "text": "On the other hand, we must consider the alternative perspective.",
+      "moveType": "contrast",
+      "moveCategory": "structural",
+      "confidence": "high",
+      "notes": "Explicit contrast marker"
+    },
+    {
+      "id": "starter-010",
+      "text": "In my experience working with students, I've found this consistently.",
+      "moveType": "ethos",
+      "moveCategory": "appeal",
+      "confidence": "high",
+      "notes": "Personal experience establishes authority"
+    },
+    {
+      "id": "starter-011",
+      "text": "As someone who has spent twenty years in this field, I can attest to this pattern.",
+      "moveType": "ethos",
+      "moveCategory": "appeal",
+      "confidence": "high",
+      "notes": "Credentials establish credibility"
+    },
+    {
+      "id": "starter-012",
+      "text": "The research clearly demonstrates this pattern across multiple studies.",
+      "moveType": "logos",
+      "moveCategory": "appeal",
+      "confidence": "high",
+      "notes": "Appeals to evidence and research"
+    },
+    {
+      "id": "starter-013",
+      "text": "The data shows a statistically significant correlation between these factors.",
+      "moveType": "logos",
+      "moveCategory": "appeal",
+      "confidence": "high",
+      "notes": "Appeals to empirical evidence"
+    },
+    {
+      "id": "starter-014",
+      "text": "Now more than ever, we need to understand this phenomenon.",
+      "moveType": "kairos",
+      "moveCategory": "appeal",
+      "confidence": "high",
+      "notes": "Establishes urgency and timeliness"
+    },
+    {
+      "id": "starter-015",
+      "text": "Given the current crisis, this issue demands immediate attention.",
+      "moveType": "kairos",
+      "moveCategory": "appeal",
+      "confidence": "high",
+      "notes": "Situates argument in current moment"
+    },
+    {
+      "id": "starter-016",
+      "text": "This is a crucial point that deserves our full attention.",
+      "moveType": "amplification",
+      "moveCategory": "emphasis",
+      "confidence": "high",
+      "notes": "Builds importance and significance"
+    },
+    {
+      "id": "starter-017",
+      "text": "The implications of this finding cannot be overstated.",
+      "moveType": "amplification",
+      "moveCategory": "emphasis",
+      "confidence": "high",
+      "notes": "Emphasizes significance"
+    },
+    {
+      "id": "starter-018",
+      "text": "It's just a minor consideration, really.",
+      "moveType": "diminution",
+      "moveCategory": "emphasis",
+      "confidence": "high",
+      "notes": "Downplays significance"
+    },
+    {
+      "id": "starter-019",
+      "text": "In other words, we're seeing a fundamental shift in how this works.",
+      "moveType": "restatement",
+      "moveCategory": "clarification",
+      "confidence": "high",
+      "notes": "'In other words' signals restatement"
+    },
+    {
+      "id": "starter-020",
+      "text": "Put simply, the old model no longer applies.",
+      "moveType": "restatement",
+      "moveCategory": "clarification",
+      "confidence": "high",
+      "notes": "'Put simply' introduces simplified restatement"
+    }
+  ]
+}

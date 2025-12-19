@@ -1,36 +1,15 @@
-export interface DocumentHeader {
-  title: string;
-  authors: string[];
-  sourceFile: string;
-  analysisDate: string;
-  analysisTimestamp: string;
-}
-
-export interface DocumentStatistics {
-  wordCount: number;
-  sentenceCount: number;
-  paragraphCount: number;
-  characterCount: number;
-  estimatedReadingTimeMinutes: number;
-}
-
-export interface GenreMarker {
-  genre: 'academic' | 'conversational' | 'persuasive' | 'narrative' | 'technical' | 'formal';
-  score: number;
-}
-
-export interface DocumentCharacteristics {
-  genreMarkers: GenreMarker[];
-  formalityScore: number;
-  isDialogic: boolean;
-  speakers: string[];
-}
-
-export interface DocumentMetadata {
-  header: DocumentHeader;
-  statistics: DocumentStatistics;
-  characteristics: DocumentCharacteristics;
-}
+import type { Skill, SkillResult } from '../types.js';
+import { createSkillResult } from '../types.js';
+import {
+  DocumentMetadataInputSchema,
+  type DocumentMetadataInput,
+  type DocumentMetadataOutput,
+  type DocumentHeader,
+  type DocumentStatistics,
+  type DocumentCharacteristics,
+  type GenreMarker,
+  type GenreType,
+} from './schema.js';
 
 // Speaker detection patterns
 const SPEAKER_PATTERNS = [
@@ -42,7 +21,7 @@ const SPEAKER_PATTERNS = [
 ];
 
 // Genre indicator words
-const GENRE_INDICATORS = {
+const GENRE_INDICATORS: Record<GenreType, string[]> = {
   academic: [
     'hypothesis',
     'methodology',
@@ -184,31 +163,6 @@ const FORMAL_MARKERS = [
   'aforementioned',
 ];
 
-export function analyzeDocument(
-  text: string,
-  filename: string,
-  wordsPerMinute: number = 200
-): DocumentMetadata {
-  const header = extractHeader(text, filename);
-  const statistics = calculateStatistics(text, wordsPerMinute);
-  const characteristics = analyzeCharacteristics(text);
-
-  return { header, statistics, characteristics };
-}
-
-function extractHeader(text: string, filename: string): DocumentHeader {
-  const now = new Date();
-
-  const dateStr = now.toISOString().split('T')[0];
-  return {
-    title: extractTitle(text, filename),
-    authors: extractAuthors(text),
-    sourceFile: filename,
-    analysisDate: dateStr || now.toISOString().slice(0, 10),
-    analysisTimestamp: now.toISOString(),
-  };
-}
-
 function extractTitle(text: string, filename: string): string {
   const lines = text.split('\n').filter((line) => line.trim());
 
@@ -250,7 +204,12 @@ function extractAuthors(text: string): string[] {
     });
   }
 
-  // Detect speakers from transcript patterns
+  return Array.from(authors);
+}
+
+function extractSpeakers(text: string): string[] {
+  const speakers = new Set<string>();
+
   for (const pattern of SPEAKER_PATTERNS) {
     let match;
     const regex = new RegExp(pattern.source, pattern.flags);
@@ -259,13 +218,27 @@ function extractAuthors(text: string): string[] {
       if (matchedSpeaker) {
         const speaker = matchedSpeaker.trim();
         if (speaker.length > 1 && speaker.length < 50) {
-          authors.add(speaker);
+          speakers.add(speaker);
         }
       }
     }
   }
 
-  return Array.from(authors);
+  return Array.from(speakers);
+}
+
+function extractHeader(text: string, filename: string): DocumentHeader {
+  const now = new Date();
+  const speakers = extractSpeakers(text);
+
+  const dateStr = now.toISOString().split('T')[0];
+  return {
+    title: extractTitle(text, filename),
+    authors: [...extractAuthors(text), ...speakers],
+    sourceFile: filename,
+    analysisDate: dateStr || now.toISOString().slice(0, 10),
+    analysisTimestamp: now.toISOString(),
+  };
 }
 
 function calculateStatistics(text: string, wordsPerMinute: number): DocumentStatistics {
@@ -273,11 +246,9 @@ function calculateStatistics(text: string, wordsPerMinute: number): DocumentStat
   const words = text.split(/\s+/).filter((w) => w.length > 0);
   const wordCount = words.length;
 
-  // Sentence detection (handles abbreviations somewhat)
   const sentences = text.split(/[.!?]+/).filter((s) => s.trim().length > 0);
   const sentenceCount = sentences.length;
 
-  // Paragraph detection (double newline or single newline with blank)
   const paragraphs = text.split(/\n\s*\n/).filter((p) => p.trim().length > 0);
   const paragraphCount = Math.max(1, paragraphs.length);
 
@@ -293,9 +264,7 @@ function calculateStatistics(text: string, wordsPerMinute: number): DocumentStat
 }
 
 function analyzeCharacteristics(text: string): DocumentCharacteristics {
-  const lowerText = text.toLowerCase();
-  const words = lowerText.split(/\s+/);
-  const totalWords = words.length || 1;
+  const totalWords = text.split(/\s+/).length || 1;
 
   // Calculate genre scores
   const genreMarkers: GenreMarker[] = [];
@@ -306,10 +275,10 @@ function analyzeCharacteristics(text: string): DocumentCharacteristics {
       const matches = text.match(regex);
       count += matches ? matches.length : 0;
     }
-    const score = Math.min(1, count / (totalWords * 0.02)); // Normalize
+    const score = Math.min(1, count / (totalWords * 0.02));
     if (score > 0.1) {
       genreMarkers.push({
-        genre: genre as GenreMarker['genre'],
+        genre: genre as GenreType,
         score: Math.round(score * 100) / 100,
       });
     }
@@ -336,27 +305,70 @@ function analyzeCharacteristics(text: string): DocumentCharacteristics {
   const formalityScore = Math.round(((formalCount / markerTotal) * 0.5 + 0.5) * 100) / 100;
 
   // Detect speakers
-  const speakers = new Set<string>();
-  for (const pattern of SPEAKER_PATTERNS) {
-    let match;
-    const regex = new RegExp(pattern.source, pattern.flags);
-    while ((match = regex.exec(text)) !== null) {
-      const matchedSpeaker = match[1];
-      if (matchedSpeaker) {
-        const speaker = matchedSpeaker.trim();
-        if (speaker.length > 1 && speaker.length < 50) {
-          speakers.add(speaker);
-        }
-      }
-    }
-  }
-
-  const isDialogic = speakers.size >= 2;
+  const speakers = extractSpeakers(text);
+  const isDialogic = speakers.length >= 2;
 
   return {
     genreMarkers,
     formalityScore,
     isDialogic,
-    speakers: Array.from(speakers),
+    speakers,
   };
 }
+
+export const documentMetadata: Skill<DocumentMetadataInput, DocumentMetadataOutput> = {
+  metadata: {
+    name: 'document-metadata',
+    version: '1.0.0',
+    description: 'Analyze document text for metadata, statistics, and characteristics',
+    category: 'document',
+  },
+
+  validate(input: DocumentMetadataInput) {
+    const result = DocumentMetadataInputSchema.safeParse(input);
+    if (!result.success) {
+      return {
+        valid: false,
+        errors: result.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`),
+      };
+    }
+    return { valid: true };
+  },
+
+  async invoke(input: DocumentMetadataInput): Promise<SkillResult<DocumentMetadataOutput>> {
+    const startTime = Date.now();
+    const { name, version } = this.metadata;
+
+    // Validate input
+    const validation = this.validate!(input);
+    if (!validation.valid) {
+      return createSkillResult<DocumentMetadataOutput>(name, version, startTime, undefined, {
+        code: 'VALIDATION_ERROR',
+        message: 'Invalid input',
+        details: validation.errors,
+      });
+    }
+
+    try {
+      const { text, filename, wordsPerMinute = 200 } = input;
+
+      const header = extractHeader(text, filename);
+      const statistics = calculateStatistics(text, wordsPerMinute);
+      const characteristics = analyzeCharacteristics(text);
+
+      return createSkillResult(name, version, startTime, {
+        header,
+        statistics,
+        characteristics,
+      });
+    } catch (error) {
+      return createSkillResult<DocumentMetadataOutput>(name, version, startTime, undefined, {
+        code: 'ANALYSIS_ERROR',
+        message: error instanceof Error ? error.message : 'Failed to analyze document',
+        details: error,
+      });
+    }
+  },
+};
+
+export default documentMetadata;

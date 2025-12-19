@@ -3,6 +3,7 @@ import type { Request, Response } from 'express';
 import multer from 'multer';
 import { analyzeSentiment } from '../services/sentimentService.js';
 import { validateRequest } from '../middleware/validateRequest.js';
+import { z } from 'zod';
 import { AnalyzeRequestSchema, EmotionType } from '../types/sentiment.js';
 import type { AnalyzeRequest, HealthResponse } from '../types/sentiment.js';
 import { config } from '../config/index.js';
@@ -153,10 +154,10 @@ router.post('/analyze/file', upload.single('file'), async (req, res, next) => {
     }
 
     // Parse emotions from form data if provided
-    let emotions: string[] | undefined;
+    let emotions: z.infer<typeof EmotionType>[] | undefined;
     if (req.body.emotions) {
       const emotionList = req.body.emotions.split(',').map((e: string) => e.trim());
-      const validEmotions = emotionList.filter((e: string) => EmotionType.safeParse(e).success);
+      const validEmotions = emotionList.filter((e: string) => EmotionType.safeParse(e).success) as z.infer<typeof EmotionType>[];
       emotions = validEmotions.length > 0 ? validEmotions : undefined;
     }
 
