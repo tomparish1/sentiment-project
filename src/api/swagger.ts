@@ -4,9 +4,9 @@ const options: swaggerJsdoc.Options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Sentiment Analyzer API',
-      version: '0.4.0',
-      description: 'A sentiment analysis API powered by Claude AI',
+      title: 'Writers Portal API',
+      version: '0.5.0',
+      description: 'A document analysis platform with agents, skills, and NLP interface',
       contact: {
         name: 'API Support',
       },

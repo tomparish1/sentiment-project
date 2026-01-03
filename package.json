@@ -1,8 +1,8 @@
 {
-  "name": "sentiment-analyzer",
-  "version": "0.4.0",
+  "name": "writers-portal",
+  "version": "0.5.0",
   "type": "module",
-  "description": "A sentiment analysis tool with web UI using Claude API",
+  "description": "A modular document analysis platform with agents, skills, and NLP interface",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
@@ -24,13 +24,15 @@
     "prestart": "npm run build"
   },
   "keywords": [
+    "writers-portal",
+    "document-analysis",
     "sentiment",
-    "analysis",
+    "rhetoric",
+    "agents",
+    "skills",
+    "nlp",
     "claude",
     "ai",
-    "web",
-    "ui",
-    "express",
     "typescript"
   ],
   "author": "",

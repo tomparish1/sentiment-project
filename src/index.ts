@@ -5,7 +5,7 @@ import { logger } from './utils/logger.js';
 const app = createApp();
 
 const server = app.listen(config.PORT, () => {
-  logger.info('Sentiment Analyzer v0.4.0');
+  logger.info('Writers Portal v0.5.0');
   logger.info(`Server running at http://localhost:${String(config.PORT)}`);
   logger.info(`API Docs at http://localhost:${String(config.PORT)}/api/docs`);
   logger.info(`Environment: ${config.NODE_ENV}`);

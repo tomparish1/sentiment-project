@@ -1,4 +1,4 @@
-# Future Architecture: Skills and Agents
+wclc# Future Architecture: Skills and Agents
 
 ## Educational Guide for the Sentiment & Rhetoric Analyzer
 
@@ -85,7 +85,7 @@ A **Skill** is a focused, self-contained capability with:
 | Embedding Engine | `embedding-engine` | Generate text embeddings |
 | Exemplar Store | `exemplar-manager` | Store and search exemplars |
 
-### Skill Definition Template
+##111# Skill Definition Template
 
 Each skill would have a `SKILL.md` file:
 

@@ -1,207 +1,214 @@
-# Sentiment Analyzer
+# Writer's Portal
 
-A sentiment analysis tool with a modern web UI, powered by Claude API to analyze text for emotional content and sentiment.
+A modular document analysis platform with agents, skills, and natural language interface. Powered by Claude AI.
 
-**Current Version:** v0.3.0
+**Current Version:** v0.5.0
 
-## Features
+## Overview
 
-### Analysis Capabilities
-- Analyzes overall sentiment (positive, negative, neutral)
-- Provides confidence scores (0-100%)
-- **Emotion Analysis**: Detects up to 10 different emotions with intensity scores
-  - Joy, Anger, Sadness, Fear, Surprise, Disgust (6 basic emotions)
-  - Love, Trust, Anticipation, Confusion (extended emotions)
-  - Customizable: Select which emotions to analyze
-- Identifies key emotional indicators
-- Gives detailed explanations of analysis
+Writer's Portal provides comprehensive document analysis through a composable architecture:
 
-### Web Interface
-- Modern, responsive design with Tailwind CSS
-- Live server status indicator
-- Real-time sentiment analysis
-- **Emotion Analysis Controls**: Toggle emotions on/off with checkboxes
-- **Emotion Visualization**: Color-coded bars showing emotion intensity
-- Visual confidence indicators with animated progress bars
-- Multiple example texts
-- Mobile-friendly interface
-- Error handling with user feedback
-- Gradient backgrounds and polished UI elements
+- **Agents** orchestrate complex, multi-step analysis workflows
+- **Skills** provide focused, reusable capabilities
+- **NLP Interface** (planned) enables natural language interaction with all capabilities
 
-### API
-- RESTful API endpoints
-- Health check endpoint with version info
-- JSON responses
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────┐
+│                  Web UI / API                        │
+├─────────────────────────────────────────────────────┤
+│                    Agents                            │
+│  ┌─────────────────┐  ┌─────────────────────────┐   │
+│  │ Content Analysis│  │ Research Analyst        │   │
+│  └─────────────────┘  └─────────────────────────┘   │
+├─────────────────────────────────────────────────────┤
+│                    Skills                            │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌────────┐ │
+│  │ Document │ │Sentiment │ │ Rhetoric │ │  Text  │ │
+│  │  Parser  │ │ Analyzer │ │ Analyzer │ │Segment │ │
+│  └──────────┘ └──────────┘ └──────────┘ └────────┘ │
+└─────────────────────────────────────────────────────┘
+```
+
+## Available Agents
+
+### Content Analysis Agent
+Comprehensive document analysis including sentiment, emotions, and rhetoric.
+
+**Capabilities:**
+- Document parsing (PDF, DOCX, TXT, MD)
+- Metadata extraction (word count, reading time, genre detection)
+- Sentiment analysis with emotion detection
+- Rhetoric analysis (when appropriate)
+- Synthesis report generation
+
+### Research Analyst Agent
+Deep analysis for dialogic documents with speaker identification.
+
+**Capabilities:**
+- Speaker identification and separation
+- Per-speaker sentiment analysis
+- Speaker comparison and dynamics
+- Notable quote extraction
+- Research report generation
+
+## Available Skills
+
+| Skill | Description |
+|-------|-------------|
+| `document-parser` | Extract text from PDF, DOCX, TXT, MD files |
+| `document-metadata` | Extract statistics, detect genre, identify speakers |
+| `sentiment-analyzer` | Analyze sentiment with 10 emotion types |
+| `rhetoric-analyzer` | Classify rhetorical moves using exemplar matching |
+| `text-segmenter` | Break text into sentences, paragraphs, or speaker turns |
+| `embedding-engine` | Generate embeddings for similarity matching |
+| `exemplar-store` | Manage rhetoric exemplars |
 
 ## Quick Start
 
-### Easy Start (Recommended)
-Use the provided shell script to start the server:
-```bash
-./start-server.sh
-```
-
-This script will:
-- Check for `.env` file and create if missing
-- Install dependencies if needed
-- Start the server
-
-### Manual Start
-
-#### 1. Install Dependencies
+### 1. Install Dependencies
 ```bash
 npm install
 ```
 
-#### 2. Configure API Key
-Create a `.env` file with your Anthropic API key:
+### 2. Configure API Key
 ```bash
 cp .env.example .env
-# Edit .env and add your API key:
-# ANTHROPIC_API_KEY=your_api_key_here
+# Edit .env and add: ANTHROPIC_API_KEY=your_key_here
 ```
 
-#### 3. Start the Server
+### 3. Start the Server
 ```bash
-npm start
+npm run dev
 ```
 
-The web interface will be available at `http://localhost:3000`
-
-### Stopping the Server
-
-Use the stop script:
-```bash
-./stop-server.sh
-```
-
-Or press `Ctrl+C` in the terminal where the server is running
+The portal will be available at `http://localhost:3000`
 
 ## Usage
 
-### Web Interface
-1. Open your browser to `http://localhost:3000`
-2. Enter or paste text in the input area
-3. Click "Analyze Sentiment" or press Ctrl+Enter
-4. View the results including sentiment, confidence, indicators, and explanation
-
-### CLI Mode (Original)
-You can still use the command-line version:
-```bash
-npm run cli
-```
+### Web Portal
+Open `http://localhost:3000/portal.html` for the main interface.
 
 ### API Endpoints
 
-#### Analyze Text
+#### Agents
 ```bash
-POST /api/analyze
+# List agents
+GET /api/agents
+
+# Execute content analysis
+POST /api/agents/content-analysis/execute
 Content-Type: application/json
+{ "text": "Your document text..." }
 
-{
-  "text": "Your text to analyze here"
-}
+# Execute with file upload
+POST /api/agents/content-analysis/execute/file
+Content-Type: multipart/form-data
+file: <your-file>
 ```
 
-Response:
-```json
-{
-  "sentiment": "positive",
-  "confidence": 0.95,
-  "indicators": ["loved", "impeccable", "divine"],
-  "explanation": "The text expresses strong positive sentiment..."
-}
-```
-
-#### Health Check
+#### Skills
 ```bash
-GET /api/health
+# List skills
+GET /api/skills
+
+# Invoke a skill
+POST /api/skills/{skill-name}/invoke
+Content-Type: application/json
+{ ...skill-specific-input }
 ```
 
-Response:
-```json
-{
-  "status": "ok",
-  "version": "0.2.0",
-  "timestamp": "2025-12-06T..."
-}
+#### Documentation
+```bash
+GET /api/docs      # Swagger UI
+GET /api/docs.json # OpenAPI spec
 ```
 
 ## Project Structure
 
 ```
-sentiment/
-├── public/                  # Web UI files
-│   ├── index.html          # Main HTML page
-│   ├── styles.css          # Styling
-│   └── app.js              # Client-side JavaScript
-├── server.js               # Express server
-├── sentiment-analyzer.js   # CLI version
-├── package.json            # Dependencies
-├── ROADMAP.md             # Future features
-├── CHANGELOG.md           # Version history
-├── .env.example           # Environment template
-├── .gitignore            # Git ignore rules
-└── README.md             # This file
+writers-portal/
+├── agents/                 # Agent implementations
+│   ├── content-analysis/
+│   ├── research-analyst/
+│   ├── registry.ts        # Agent discovery
+│   └── types.ts           # Agent interfaces
+├── skills/                 # Skill implementations
+│   ├── document-parser/
+│   ├── sentiment-analyzer/
+│   ├── rhetoric-analyzer/
+│   ├── registry.ts        # Skill discovery
+│   └── types.ts           # Skill interfaces
+├── src/
+│   ├── api/               # Express routes
+│   ├── config/            # Configuration
+│   └── index.ts           # Entry point
+├── public/                # Web UI
+│   └── portal.html        # Main portal interface
+├── data/
+│   └── exemplars/         # Rhetoric exemplars
+├── docs/
+│   ├── specs/             # Technical specifications
+│   └── reference/         # API reference
+└── tests/                 # Test suites
 ```
 
-## Configuration
+## Documentation
 
-### Environment Variables
-- `ANTHROPIC_API_KEY`: Your Anthropic API key (required)
-- `PORT`: Server port (default: 3000)
-
-### Customization
-- Edit `server.js` to modify the analysis prompt or model
-- Edit `public/app.js` to add example texts or modify UI behavior
-- Edit `public/styles.css` to customize the appearance
+- [Skills & Agents Guide](./docs/SKILLS_AND_AGENTS_GUIDE.md)
+- [NLP Front-End Specification](./docs/specs/NLP_FRONTEND_SPECIFICATION.md)
+- [Rhetoric Analyzer Spec](./docs/specs/RHETORIC_ANALYZER_SPEC.md)
+- [Embedding Analyzer Spec](./docs/specs/EMBEDDING_ANALYZER_SPEC.md)
 
 ## Development
 
 ### Scripts
-- `npm start` - Start the web server
-- `npm run dev` - Start in development mode (same as start)
-- `npm run cli` - Run the CLI version
+```bash
+npm run dev          # Development server with hot reload
+npm run build        # Build for production
+npm run test         # Run tests
+npm run lint         # Lint code
+npm run typecheck    # Type checking
+```
 
-### Adding New Features
-See [ROADMAP.md](./ROADMAP.md) for planned features and version timeline.
+### Adding a New Skill
+1. Create directory: `skills/your-skill/`
+2. Implement: `schema.ts`, `invoke.ts`, `index.ts`
+3. Register in `skills/registry.ts`
 
-## Version History
-
-See [CHANGELOG.md](./CHANGELOG.md) for detailed version history.
+### Adding a New Agent
+1. Create directory: `agents/your-agent/`
+2. Implement: `schema.ts`, `agent.ts`, `index.ts`
+3. Register in `agents/registry.ts`
 
 ## Roadmap
 
-Planned features include:
-- Batch text processing
-- File upload support
-- Emotion detection
-- Multi-language support
-- Analytics dashboard
+### Current (v0.5.0)
+- Agents & Skills architecture
+- Content analysis and research agents
+- 7 composable skills
+- REST API with Swagger docs
 
-See the full roadmap in [ROADMAP.md](./ROADMAP.md).
+### Next (v0.6.0) - NLP Interface
+- Natural language query processing
+- Conversational context management
+- Chat-based UI
 
-## Troubleshooting
+### Future
+- Integration with transcription services
+- Additional analysis agents
+- Plugin system for external skills
 
-### API Key Issues
-- Ensure your `.env` file exists and contains a valid `ANTHROPIC_API_KEY`
-- Check that the `.env` file is in the root directory
+## Configuration
 
-### Port Already in Use
-- Change the port by setting `PORT` in your `.env` file:
-  ```
-  PORT=3001
-  ```
-
-### Dependencies Not Found
-- Run `npm install` to install all required packages
+### Environment Variables
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `ANTHROPIC_API_KEY` | Claude API key | Required |
+| `PORT` | Server port | 3000 |
+| `NODE_ENV` | Environment | development |
 
 ## License
 
 ISC
-
-## Support
-
-For issues or questions, please check:
-- [CHANGELOG.md](./CHANGELOG.md) for recent changes
-- [ROADMAP.md](./ROADMAP.md) for planned features

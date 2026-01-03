@@ -1,9 +1,76 @@
 # Changelog
 
-All notable changes to the Sentiment Analyzer project will be documented in this file.
+All notable changes to the Writer's Portal project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [0.5.0] - 2026-01-03
+
+### Changed
+- **Project Renamed**: `sentiment-project` → `writers-portal`
+  - Reflects evolution from simple sentiment analyzer to full document analysis platform
+  - Updated package.json name and description
+  - Updated all internal version strings and branding
+
+- **Documentation Reorganized**:
+  - Moved specifications to `docs/specs/` directory
+  - `NLP_FRONTEND_SPECIFICATION.md` - Natural language interface spec
+  - `RHETORIC_ANALYZER_SPEC.md` - Rhetoric analysis specification
+  - `EMBEDDING_ANALYZER_SPEC.md` - Embedding system specification
+
+- **README Rewritten**: Comprehensive documentation reflecting current architecture
+  - Agents & Skills architecture overview
+  - API endpoint documentation
+  - Project structure guide
+  - Development workflow
+
+### Added
+- **NLP Front-End Specification** (`docs/specs/NLP_FRONTEND_SPECIFICATION.md`)
+  - Intent classification system design
+  - Parameter extraction layer
+  - Conversation context management
+  - Response formatting templates
+  - Chat UI wireframes
+  - OpenAPI specification for NLP endpoints
+  - 5-phase implementation plan
+
+### Technical Details
+- Updated external references in `agent-roster` project
+- All builds and type checks passing
+- No breaking changes to existing API
+
+---
+
+## [0.4.0] - 2025-12-18
+
+### Added
+- **Agents Architecture**: Orchestrators for complex multi-step workflows
+  - Content Analysis Agent - comprehensive document analysis
+  - Research Analyst Agent - speaker-focused analysis for dialogues
+  - Agent registry for dynamic discovery
+
+- **Skills Architecture**: Focused, reusable capabilities
+  - document-parser - PDF, DOCX, TXT, MD extraction
+  - document-metadata - statistics, genre detection, speaker identification
+  - sentiment-analyzer - sentiment with 10 emotion types
+  - rhetoric-analyzer - rhetorical move classification
+  - text-segmenter - sentence, paragraph, speaker turn segmentation
+  - embedding-engine - vector embeddings for similarity
+  - exemplar-store - rhetoric exemplar management
+  - Skill registry for dynamic discovery
+
+- **Portal UI** (`public/portal.html`) - Unified interface for all agents
+
+- **Swagger/OpenAPI Documentation** at `/api/docs`
+
+### Technical Details
+- TypeScript throughout
+- Zod schema validation
+- Workflow tracking with decision recording
+- Modular, extensible architecture
 
 ---
 
@@ -163,6 +230,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History Summary
 
+- **v0.5.0** - Project renamed to Writer's Portal, NLP front-end specification
+- **v0.4.0** - Agents & Skills architecture, Portal UI
+- **v0.3.0** - Emotion analysis feature
+- **v0.2.1** - Server status indicator, Tailwind CSS
 - **v0.2.0** - Web UI and API server
 - **v0.1.0** - CLI tool initial release
 
