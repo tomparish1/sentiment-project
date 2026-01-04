@@ -1,0 +1,104 @@
+[
+  {
+    "id": "f3646475-8677-4139-bad4-b9422f82294d",
+    "timestamp": "2026-01-04T16:27:34.028Z",
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "What is 2+2? Answer with just the number."
+        }
+      ],
+      "options": {
+        "maxTokens": 50
+      }
+    },
+    "providers": [
+      "claude"
+    ],
+    "results": [
+      {
+        "provider": "claude",
+        "model": "claude-sonnet-4-20250514",
+        "response": {
+          "content": "4",
+          "model": "claude-sonnet-4-20250514",
+          "provider": "claude",
+          "usage": {
+            "inputTokens": 20,
+            "outputTokens": 5,
+            "totalTokens": 25
+          },
+          "finishReason": "stop",
+          "latencyMs": 2357
+        },
+        "success": true
+      }
+    ],
+    "analysis": {
+      "agreementScore": 1,
+      "differences": [],
+      "fastestProvider": "claude",
+      "cheapestProvider": "claude"
+    },
+    "totalTimeMs": 2360
+  },
+  {
+    "id": "308d78ee-02ce-4a78-af21-3b7a5ebbf47a",
+    "timestamp": "2026-01-04T16:36:08.042Z",
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "Explain machine learning in one sentence."
+        }
+      ],
+      "options": {
+        "maxTokens": 100
+      }
+    },
+    "providers": [
+      "claude",
+      "ollama"
+    ],
+    "results": [
+      {
+        "provider": "claude",
+        "model": "claude-sonnet-4-20250514",
+        "response": {
+          "content": "Machine learning is a method of teaching computers to recognize patterns and make predictions from data without being explicitly programmed for each specific task.",
+          "model": "claude-sonnet-4-20250514",
+          "provider": "claude",
+          "usage": {
+            "inputTokens": 15,
+            "outputTokens": 29,
+            "totalTokens": 44
+          },
+          "finishReason": "stop",
+          "latencyMs": 3497
+        },
+        "success": true
+      },
+      {
+        "provider": "ollama",
+        "model": "unknown",
+        "response": {
+          "content": "",
+          "model": "unknown",
+          "provider": "ollama",
+          "latencyMs": 0,
+          "finishReason": "error"
+        },
+        "error": "Ollama error: 404 {\"error\":\"model 'llama3.2' not found\"}",
+        "success": false
+      }
+    ],
+    "analysis": {
+      "agreementScore": 1,
+      "differences": [],
+      "fastestProvider": "claude",
+      "cheapestProvider": "claude"
+    },
+    "totalTimeMs": 3497
+  }
+]

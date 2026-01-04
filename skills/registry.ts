@@ -15,6 +15,8 @@ import { embeddingEngine } from './embedding-engine/index.js';
 import { textSegmenter } from './text-segmenter/index.js';
 import { exemplarStore } from './exemplar-store/index.js';
 import { rhetoricAnalyzer } from './rhetoric-analyzer/index.js';
+import { sourceLibrary } from './source-library/index.js';
+import { promptTester } from './prompt-tester/index.js';
 
 // Registry of all available skills
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -30,6 +32,12 @@ skills.set('embedding-engine', embeddingEngine);
 skills.set('text-segmenter', textSegmenter);
 skills.set('exemplar-store', exemplarStore);
 skills.set('rhetoric-analyzer', rhetoricAnalyzer);
+
+// Register built-in skills - Phase 3 (Source Library)
+skills.set('source-library', sourceLibrary);
+
+// Register built-in skills - Phase 4 (Multi-LLM Comparison)
+skills.set('prompt-tester', promptTester);
 
 /**
  * Get a skill by name
@@ -96,6 +104,8 @@ export { embeddingEngine } from './embedding-engine/index.js';
 export { textSegmenter } from './text-segmenter/index.js';
 export { exemplarStore } from './exemplar-store/index.js';
 export { rhetoricAnalyzer } from './rhetoric-analyzer/index.js';
+export { sourceLibrary } from './source-library/index.js';
+export { promptTester } from './prompt-tester/index.js';
 
 // Export types
 export type { Skill, SkillMetadata, SkillResult } from './types.js';

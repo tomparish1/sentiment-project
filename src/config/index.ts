@@ -8,6 +8,10 @@ const envSchema = z.object({
   PORT: z.string().transform(Number).pipe(z.number().positive()).default('3000'),
   ANTHROPIC_API_KEY: z.string().min(1, 'ANTHROPIC_API_KEY is required'),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
+  // Optional provider API keys for multi-LLM comparison
+  OPENAI_API_KEY: z.string().optional(),
+  GOOGLE_API_KEY: z.string().optional(),
+  OLLAMA_BASE_URL: z.string().optional().default('http://localhost:11434'),
 });
 
 const parseEnv = () => {

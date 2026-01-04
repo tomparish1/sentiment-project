@@ -1,0 +1,22 @@
+{
+  "claude:general": {
+    "timestamp": "2026-01-04T16:36:08.042Z",
+    "provider": "claude",
+    "model": "claude-sonnet-4-20250514",
+    "context": "general",
+    "successRate": 1,
+    "avgLatencyMs": 2927,
+    "avgAgreement": 1,
+    "sampleSize": 2
+  },
+  "ollama:general": {
+    "timestamp": "2026-01-04T16:36:08.042Z",
+    "provider": "ollama",
+    "model": "unknown",
+    "context": "general",
+    "successRate": 0,
+    "avgLatencyMs": 0,
+    "avgAgreement": 1,
+    "sampleSize": 1
+  }
+}
