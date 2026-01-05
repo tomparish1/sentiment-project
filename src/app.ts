@@ -1,6 +1,7 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import { apiRoutes } from './api/routes.js';
 import { skillRoutes } from './api/skillRoutes.js';
@@ -14,6 +15,14 @@ const __dirname = path.dirname(__filename);
 
 export function createApp() {
   const app = express();
+
+  // CORS - Allow requests from file:// and localhost
+  app.use(
+    cors({
+      origin: true, // Allow all origins including file://
+      credentials: true,
+    })
+  );
 
   // Middleware
   app.use(express.json());
