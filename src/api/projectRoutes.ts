@@ -198,6 +198,58 @@ router.put('/:id', async (req: Request<IdParams>, res: Response) => {
 
 /**
  * @openapi
+ * /api/projects/{id}:
+ *   patch:
+ *     summary: Partially update a project
+ *     tags:
+ *       - Projects
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Updated project
+ *       404:
+ *         description: Project not found
+ */
+router.patch('/:id', async (req: Request<IdParams>, res: Response) => {
+  try {
+    const projectId = req.params.id;
+    const projectPath = path.join(PROJECTS_DIR, projectId, 'project.json');
+    const existing = await loadProject(projectId);
+
+    if (!existing) {
+      res.status(404).json({ error: 'Project not found' });
+      return;
+    }
+
+    const updates = req.body as Record<string, unknown>;
+    const updated = {
+      ...existing,
+      ...updates,
+      id: projectId, // Prevent ID change
+      updated: new Date().toISOString()
+    };
+
+    await fs.writeFile(projectPath, JSON.stringify(updated, null, 2));
+    res.json(updated);
+  } catch (error) {
+    console.error('Error updating project:', error);
+    res.status(500).json({ error: 'Failed to update project' });
+  }
+});
+
+/**
+ * @openapi
  * /api/projects:
  *   post:
  *     summary: Create a new project
