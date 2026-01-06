@@ -569,6 +569,200 @@ router.post('/open-in-obsidian', async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * @openapi
+ * /api/projects/{id}/start-writing:
+ *   post:
+ *     summary: Create draft.md if needed and open in Obsidian
+ *     tags:
+ *       - Projects
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Draft opened in Obsidian
+ */
+router.post('/:id/start-writing', async (req: Request<IdParams>, res: Response) => {
+  try {
+    const projectId = req.params.id;
+    const project = await loadProject(projectId);
+
+    if (!project) {
+      res.status(404).json({ error: 'Project not found' });
+      return;
+    }
+
+    const projectDir = path.join(PROJECTS_DIR, projectId);
+    const draftPath = path.join(projectDir, 'draft.md');
+
+    // Check if draft exists, create if not
+    let created = false;
+    try {
+      await fs.access(draftPath);
+    } catch {
+      // Create draft with frontmatter
+      const frontmatter = `---
+title: "${project.title}"
+project: ${projectId}
+type: ${project.type}
+phase: ${project.phase}
+created: ${new Date().toISOString()}
+---
+
+# ${project.title}
+
+## Goal
+${project.goal}
+
+## Draft
+
+`;
+      await fs.writeFile(draftPath, frontmatter);
+      created = true;
+
+      // Update project to reference the draft
+      project.files.currentDraft = `projects/${projectId}/draft.md`;
+      project.updated = new Date().toISOString();
+      await fs.writeFile(
+        path.join(projectDir, 'project.json'),
+        JSON.stringify(project, null, 2)
+      );
+    }
+
+    // Open in Obsidian via URL scheme
+    const { exec } = await import('child_process');
+    const vaultName = 'writing-vault';
+    const fileInVault = `projects/${projectId}/draft`;
+    const obsidianUrl = `obsidian://open?vault=${encodeURIComponent(vaultName)}&file=${encodeURIComponent(fileInVault)}`;
+
+    exec(`open "${obsidianUrl}"`, (error) => {
+      if (error) {
+        console.error('Obsidian launch error:', error);
+        res.status(500).json({ error: error.message });
+        return;
+      }
+      res.json({
+        success: true,
+        created,
+        draftPath: `projects/${projectId}/draft.md`,
+        project: project.title
+      });
+    });
+  } catch (error) {
+    console.error('Error starting writing:', error);
+    res.status(500).json({ error: 'Failed to start writing session' });
+  }
+});
+
+/**
+ * @openapi
+ * /api/projects/{id}/add-research:
+ *   post:
+ *     summary: Create a new research file
+ *     tags:
+ *       - Projects
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - filename
+ *             properties:
+ *               filename:
+ *                 type: string
+ *               content:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Research file created
+ */
+router.post('/:id/add-research', async (req: Request<IdParams>, res: Response) => {
+  try {
+    const projectId = req.params.id;
+    const { filename, content } = req.body as { filename: string; content?: string };
+
+    if (!filename) {
+      res.status(400).json({ error: 'filename is required' });
+      return;
+    }
+
+    const project = await loadProject(projectId);
+    if (!project) {
+      res.status(404).json({ error: 'Project not found' });
+      return;
+    }
+
+    const researchDir = path.join(PROJECTS_DIR, projectId, 'research');
+
+    // Ensure research directory exists
+    await fs.mkdir(researchDir, { recursive: true });
+
+    // Sanitize filename and ensure .md extension
+    const safeName = filename.replace(/[^a-zA-Z0-9-_ ]/g, '').trim();
+    const finalName = safeName.endsWith('.md') ? safeName : `${safeName}.md`;
+    const filePath = path.join(researchDir, finalName);
+
+    // Check if file already exists
+    try {
+      await fs.access(filePath);
+      res.status(409).json({ error: 'File already exists' });
+      return;
+    } catch {
+      // File doesn't exist, we can create it
+    }
+
+    // Create file with frontmatter
+    const now = new Date().toISOString();
+    const fileContent = content || `---
+title: "${safeName}"
+project: ${projectId}
+type: research
+created: ${now}
+---
+
+# ${safeName}
+
+## Notes
+
+`;
+
+    await fs.writeFile(filePath, fileContent);
+
+    // Open in Obsidian
+    const { exec } = await import('child_process');
+    const vaultName = 'writing-vault';
+    const fileInVault = `projects/${projectId}/research/${safeName}`;
+    const obsidianUrl = `obsidian://open?vault=${encodeURIComponent(vaultName)}&file=${encodeURIComponent(fileInVault)}`;
+
+    exec(`open "${obsidianUrl}"`, (error) => {
+      if (error) {
+        console.error('Obsidian launch error:', error);
+        // Still return success since file was created
+      }
+      res.status(201).json({
+        success: true,
+        filePath: `projects/${projectId}/research/${finalName}`,
+        openedInObsidian: !error
+      });
+    });
+  } catch (error) {
+    console.error('Error adding research file:', error);
+    res.status(500).json({ error: 'Failed to create research file' });
+  }
+});
+
 router.post('/launch', async (req: Request, res: Response) => {
   try {
     const { path: dirPath, command } = req.body as { path: string; command?: string };
