@@ -17,6 +17,7 @@ import { exemplarStore } from './exemplar-store/index.js';
 import { rhetoricAnalyzer } from './rhetoric-analyzer/index.js';
 import { sourceLibrary } from './source-library/index.js';
 import { promptTester } from './prompt-tester/index.js';
+import { rssDiscovery } from './rss-discovery/index.js';
 
 // Registry of all available skills
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -38,6 +39,9 @@ skills.set('source-library', sourceLibrary);
 
 // Register built-in skills - Phase 4 (Multi-LLM Comparison)
 skills.set('prompt-tester', promptTester);
+
+// Register built-in skills - Phase 5 (RSS Discovery)
+skills.set('rss-discovery', rssDiscovery);
 
 /**
  * Get a skill by name
@@ -106,6 +110,7 @@ export { exemplarStore } from './exemplar-store/index.js';
 export { rhetoricAnalyzer } from './rhetoric-analyzer/index.js';
 export { sourceLibrary } from './source-library/index.js';
 export { promptTester } from './prompt-tester/index.js';
+export { rssDiscovery } from './rss-discovery/index.js';
 
 // Export types
 export type { Skill, SkillMetadata, SkillResult } from './types.js';
