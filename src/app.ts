@@ -9,6 +9,7 @@ import { agentRoutes } from './api/agentRoutes.js';
 import { projectRoutes } from './api/projectRoutes.js';
 import { rssRoutes } from './api/rssRoutes.js';
 import { compareRoutes } from './api/compareRoutes.js';
+import { tracesRoutes } from './api/tracesRoutes.js';
 import { swaggerSpec } from './api/swagger.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import { requestLogger } from './middleware/requestLogger.js';
@@ -45,6 +46,7 @@ export function createApp() {
   app.use('/api/projects', projectRoutes);
   app.use('/api/rss', rssRoutes);
   app.use('/api/compare', compareRoutes);
+  app.use('/api/traces', tracesRoutes);
 
   // Static files (for production - in dev, Vite serves these)
   const publicPath = path.join(__dirname, '..', 'public');
