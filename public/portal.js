@@ -25,6 +25,7 @@ tabButtons.forEach(btn => {
         // Load tab-specific data
         if (tabId === 'skills') loadSkills();
         if (tabId === 'exemplars') loadExemplars();
+        if (tabId === 'projects') loadProjects();
     });
 });
 
@@ -571,6 +572,147 @@ document.getElementById('saveExemplarBtn').addEventListener('click', async () =>
         alert('Error: ' + error.message);
     }
 });
+
+// ========== Projects Manager ==========
+const phaseColors = {
+    'research': 'bg-yellow-100 border-yellow-300 text-yellow-800',
+    'outline': 'bg-blue-100 border-blue-300 text-blue-800',
+    'drafting': 'bg-orange-100 border-orange-300 text-orange-800',
+    'revision': 'bg-purple-100 border-purple-300 text-purple-800',
+    'polish': 'bg-pink-100 border-pink-300 text-pink-800',
+    'review': 'bg-indigo-100 border-indigo-300 text-indigo-800',
+    'published': 'bg-green-100 border-green-300 text-green-800'
+};
+
+async function loadProjects() {
+    try {
+        const response = await fetch('/api/projects');
+        const data = await response.json();
+        displayProjects(data.projects);
+    } catch (error) {
+        console.error('Failed to load projects:', error);
+        document.getElementById('projectList').innerHTML = `
+            <div class="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+                Failed to load projects: ${error.message}
+            </div>
+        `;
+    }
+}
+
+function displayProjects(projects) {
+    const listDiv = document.getElementById('projectList');
+
+    if (!projects || projects.length === 0) {
+        listDiv.innerHTML = `
+            <div class="p-6 bg-slate-50 border border-slate-200 rounded-lg text-center">
+                <p class="text-slate-600 mb-2">No projects yet.</p>
+                <p class="text-sm text-slate-500">Click "+ New Project" to create your first writing project.</p>
+            </div>
+        `;
+        return;
+    }
+
+    listDiv.innerHTML = projects.map(project => `
+        <div class="p-4 border rounded-xl hover:shadow-md transition-shadow ${phaseColors[project.phase] || 'bg-slate-100 border-slate-300'}">
+            <div class="flex justify-between items-start mb-2">
+                <h3 class="font-bold text-slate-800">${project.title}</h3>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-medium px-2 py-0.5 rounded bg-white/50">${project.type}</span>
+                    <span class="text-xs font-medium px-2 py-0.5 rounded bg-white/50">${project.phase}</span>
+                </div>
+            </div>
+            <p class="text-sm text-slate-600 mb-2">${project.description || project.goal}</p>
+            <div class="text-sm text-slate-700 mb-2"><strong>Goal:</strong> ${project.goal}</div>
+            ${project.nextSteps && project.nextSteps.length > 0 ? `
+                <div class="text-sm text-slate-600"><strong>Next:</strong> ${project.nextSteps[0]}</div>
+            ` : ''}
+            <div class="flex justify-between items-center mt-3 pt-3 border-t border-white/50">
+                <span class="text-xs text-slate-500 font-mono">${project.id}</span>
+                <span class="text-xs text-slate-500">Updated: ${new Date(project.updated).toLocaleDateString()}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Auto-generate project ID from title
+const projectTitleInput = document.getElementById('newProjectTitle');
+const projectIdInput = document.getElementById('newProjectId');
+
+if (projectTitleInput && projectIdInput) {
+    projectTitleInput.addEventListener('input', () => {
+        const id = projectTitleInput.value
+            .toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .substring(0, 50);
+        projectIdInput.value = id;
+    });
+}
+
+// Show/hide new project form
+document.getElementById('newProjectBtn')?.addEventListener('click', () => {
+    document.getElementById('newProjectForm').classList.remove('hidden');
+    document.getElementById('newProjectTitle').focus();
+});
+
+document.getElementById('cancelProjectBtn')?.addEventListener('click', () => {
+    document.getElementById('newProjectForm').classList.add('hidden');
+    clearProjectForm();
+});
+
+document.getElementById('saveProjectBtn')?.addEventListener('click', createProject);
+
+function clearProjectForm() {
+    document.getElementById('newProjectTitle').value = '';
+    document.getElementById('newProjectId').value = '';
+    document.getElementById('newProjectGoal').value = '';
+    document.getElementById('newProjectDescription').value = '';
+    document.getElementById('newProjectType').value = 'essay';
+    document.getElementById('newProjectPhase').value = 'research';
+}
+
+async function createProject() {
+    const title = document.getElementById('newProjectTitle').value.trim();
+    const id = document.getElementById('newProjectId').value.trim();
+    const type = document.getElementById('newProjectType').value;
+    const phase = document.getElementById('newProjectPhase').value;
+    const goal = document.getElementById('newProjectGoal').value.trim();
+    const description = document.getElementById('newProjectDescription').value.trim();
+
+    if (!title || !id || !goal) {
+        alert('Please fill in Title, ID, and Goal');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/projects', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id,
+                title,
+                type,
+                goal,
+                description,
+                workingDirectory: `projects/${id}`
+            })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            document.getElementById('newProjectForm').classList.add('hidden');
+            clearProjectForm();
+            loadProjects();
+            alert(`Project "${result.title}" created successfully!`);
+        } else {
+            alert('Failed to create project: ' + (result.error || 'Unknown error'));
+        }
+    } catch (error) {
+        alert('Error: ' + error.message);
+    }
+}
 
 // Initial load
 loadSkills();
