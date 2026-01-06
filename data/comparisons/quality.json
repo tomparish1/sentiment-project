@@ -1,13 +1,13 @@
 {
   "claude:general": {
-    "timestamp": "2026-01-04T16:36:08.042Z",
+    "timestamp": "2026-01-06T18:30:18.522Z",
     "provider": "claude",
     "model": "claude-sonnet-4-20250514",
     "context": "general",
     "successRate": 1,
-    "avgLatencyMs": 2927,
+    "avgLatencyMs": 2838.75,
     "avgAgreement": 1,
-    "sampleSize": 2
+    "sampleSize": 4
   },
   "ollama:general": {
     "timestamp": "2026-01-04T16:36:08.042Z",
@@ -16,6 +16,16 @@
     "context": "general",
     "successRate": 0,
     "avgLatencyMs": 0,
+    "avgAgreement": 1,
+    "sampleSize": 1
+  },
+  "claude:programming-concepts": {
+    "timestamp": "2026-01-06T18:30:26.916Z",
+    "provider": "claude",
+    "model": "claude-sonnet-4-20250514",
+    "context": "programming-concepts",
+    "successRate": 1,
+    "avgLatencyMs": 2425,
     "avgAgreement": 1,
     "sampleSize": 1
   }

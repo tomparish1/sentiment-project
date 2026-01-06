@@ -100,5 +100,137 @@
       "cheapestProvider": "claude"
     },
     "totalTimeMs": 3497
+  },
+  {
+    "id": "4aa66c98-a54d-4f9b-90d9-c0f3b3bfe862",
+    "timestamp": "2026-01-06T18:07:28.393Z",
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "What is 2+2? Answer in one word."
+        }
+      ]
+    },
+    "providers": [
+      "claude"
+    ],
+    "results": [
+      {
+        "provider": "claude",
+        "model": "claude-sonnet-4-20250514",
+        "response": {
+          "content": "Four",
+          "model": "claude-sonnet-4-20250514",
+          "provider": "claude",
+          "usage": {
+            "inputTokens": 19,
+            "outputTokens": 4,
+            "totalTokens": 23
+          },
+          "finishReason": "stop",
+          "latencyMs": 2068
+        },
+        "success": true
+      }
+    ],
+    "analysis": {
+      "agreementScore": 1,
+      "differences": [],
+      "fastestProvider": "claude",
+      "cheapestProvider": "claude"
+    },
+    "totalTimeMs": 2070
+  },
+  {
+    "id": "3a1117e6-6ce2-425a-8cdf-7485d848ecb7",
+    "timestamp": "2026-01-06T18:30:18.522Z",
+    "input": {
+      "messages": [
+        {
+          "role": "user",
+          "content": "What are three benefits of writing daily? Be concise."
+        }
+      ]
+    },
+    "providers": [
+      "claude"
+    ],
+    "results": [
+      {
+        "provider": "claude",
+        "model": "claude-sonnet-4-20250514",
+        "response": {
+          "content": "1. **Improves writing skills** - Regular practice enhances clarity, vocabulary, and style through repetition.\n\n2. **Reduces stress** - Writing helps process emotions and thoughts, providing mental clarity and emotional release.\n\n3. **Boosts creativity** - Daily writing exercises the imagination and helps generate new ideas and perspectives.",
+          "model": "claude-sonnet-4-20250514",
+          "provider": "claude",
+          "usage": {
+            "inputTokens": 19,
+            "outputTokens": 74,
+            "totalTokens": 93
+          },
+          "finishReason": "stop",
+          "latencyMs": 3433
+        },
+        "success": true
+      }
+    ],
+    "analysis": {
+      "agreementScore": 1,
+      "differences": [],
+      "fastestProvider": "claude",
+      "cheapestProvider": "claude"
+    },
+    "totalTimeMs": 3439
+  },
+  {
+    "id": "ac132e9f-fad2-4243-a256-ba75b9503959",
+    "timestamp": "2026-01-06T18:30:26.916Z",
+    "input": {
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are a helpful programming tutor."
+        },
+        {
+          "role": "user",
+          "content": "Explain recursion in one sentence."
+        }
+      ],
+      "options": {
+        "maxTokens": 100,
+        "temperature": 0.5
+      }
+    },
+    "providers": [
+      "claude"
+    ],
+    "results": [
+      {
+        "provider": "claude",
+        "model": "claude-sonnet-4-20250514",
+        "response": {
+          "content": "Recursion is when a function calls itself to solve a problem by breaking it down into smaller, similar subproblems until it reaches a simple base case that can be solved directly.",
+          "model": "claude-sonnet-4-20250514",
+          "provider": "claude",
+          "usage": {
+            "inputTokens": 23,
+            "outputTokens": 41,
+            "totalTokens": 64
+          },
+          "finishReason": "stop",
+          "latencyMs": 2425
+        },
+        "success": true
+      }
+    ],
+    "analysis": {
+      "agreementScore": 1,
+      "differences": [],
+      "fastestProvider": "claude",
+      "cheapestProvider": "claude"
+    },
+    "totalTimeMs": 2427,
+    "context": "programming-concepts"
   }
 ]

@@ -1,0 +1,68 @@
+{
+  "feeds": [
+    {
+      "id": "stratechery",
+      "name": "Stratechery",
+      "url": "https://stratechery.com/feed/",
+      "categories": [
+        "tech",
+        "newsletter"
+      ],
+      "enabled": true,
+      "addedDate": "2026-01-06"
+    },
+    {
+      "id": "simonwillison",
+      "name": "Simon Willison",
+      "url": "https://simonwillison.net/atom/everything/",
+      "categories": [
+        "ai",
+        "tech"
+      ],
+      "enabled": true,
+      "addedDate": "2026-01-06"
+    },
+    {
+      "id": "daring-fireball",
+      "name": "Daring Fireball",
+      "url": "https://daringfireball.net/feeds/main",
+      "categories": [
+        "tech"
+      ],
+      "enabled": false,
+      "addedDate": "2026-01-06"
+    }
+  ],
+  "categories": [
+    {
+      "id": "newsletter",
+      "name": "Newsletter",
+      "color": "#3b82f6"
+    },
+    {
+      "id": "tech",
+      "name": "Technology",
+      "color": "#10b981"
+    },
+    {
+      "id": "ai",
+      "name": "Artificial Intelligence",
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "writing",
+      "name": "Writing",
+      "color": "#f59e0b"
+    },
+    {
+      "id": "culture",
+      "name": "Culture",
+      "color": "#ec4899"
+    },
+    {
+      "id": "research",
+      "name": "Research",
+      "color": "#6366f1"
+    }
+  ]
+}

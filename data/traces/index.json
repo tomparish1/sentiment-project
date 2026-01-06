@@ -1,0 +1,44 @@
+{
+  "totalCount": 4,
+  "byType": {
+    "source": [
+      "fa145626-ef8c-4aa0-95d4-05fe62983081",
+      "5ba42cad-c6ea-4315-b29c-6953e9935bd3"
+    ],
+    "creation": [
+      "c63fa8bf-0d0f-48df-bb7c-5ec221c9fc29"
+    ],
+    "editorial": [
+      "c8033e6b-35e8-4a29-9db8-2e3426959f95"
+    ]
+  },
+  "byProject": {
+    "context-graphs": [
+      "fa145626-ef8c-4aa0-95d4-05fe62983081",
+      "c63fa8bf-0d0f-48df-bb7c-5ec221c9fc29",
+      "c8033e6b-35e8-4a29-9db8-2e3426959f95"
+    ]
+  },
+  "byTag": {
+    "ai": [
+      "fa145626-ef8c-4aa0-95d4-05fe62983081",
+      "5ba42cad-c6ea-4315-b29c-6953e9935bd3"
+    ],
+    "enterprise": [
+      "fa145626-ef8c-4aa0-95d4-05fe62983081"
+    ],
+    "concept-explanation": [
+      "c63fa8bf-0d0f-48df-bb7c-5ec221c9fc29"
+    ],
+    "framing": [
+      "c8033e6b-35e8-4a29-9db8-2e3426959f95"
+    ],
+    "reader-feedback": [
+      "c8033e6b-35e8-4a29-9db8-2e3426959f95"
+    ],
+    "rejected": [
+      "5ba42cad-c6ea-4315-b29c-6953e9935bd3"
+    ]
+  },
+  "lastUpdated": "2026-01-06T18:26:36.742Z"
+}
