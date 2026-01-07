@@ -16,7 +16,9 @@ const __dirname = path.dirname(__filename);
 // __dirname is src/api, so go up 4 levels: api -> src -> writers-portal -> tools -> _tom-pa
 const WORKSPACE_ROOT = path.resolve(__dirname, '../../../..');
 const PROJECTS_DIR = path.join(WORKSPACE_ROOT, 'projects');
+const ARCHIVES_DIR = path.join(PROJECTS_DIR, 'archives');
 const TOOLS_REGISTRY = path.join(WORKSPACE_ROOT, 'tools', 'registry.json');
+const MANIFEST_PATH = path.join(PROJECTS_DIR, 'index.json');
 
 const router = Router();
 
@@ -110,6 +112,28 @@ router.get('/', async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Error loading projects:', error);
     res.status(500).json({ error: 'Failed to load projects' });
+  }
+});
+
+/**
+ * @openapi
+ * /api/projects/manifest:
+ *   get:
+ *     summary: Get the projects manifest
+ *     tags:
+ *       - Projects
+ *     responses:
+ *       200:
+ *         description: Manifest contents
+ *       404:
+ *         description: Manifest not found
+ */
+router.get('/manifest', async (_req: Request, res: Response) => {
+  try {
+    const content = await fs.readFile(MANIFEST_PATH, 'utf-8');
+    res.json(JSON.parse(content));
+  } catch {
+    res.status(404).json({ error: 'Manifest not found. POST to /api/projects/manifest to generate.' });
   }
 });
 
@@ -250,6 +274,116 @@ router.patch('/:id', async (req: Request<IdParams>, res: Response) => {
 
 /**
  * @openapi
+ * /api/projects/{id}:
+ *   delete:
+ *     summary: Delete a project
+ *     tags:
+ *       - Projects
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Project deleted
+ *       404:
+ *         description: Project not found
+ */
+router.delete('/:id', async (req: Request<IdParams>, res: Response) => {
+  try {
+    const projectId = req.params.id;
+    const projectDir = path.join(PROJECTS_DIR, projectId);
+
+    // Check if project exists
+    try {
+      await fs.access(projectDir);
+    } catch {
+      res.status(404).json({ error: 'Project not found' });
+      return;
+    }
+
+    // Remove the project directory recursively
+    await fs.rm(projectDir, { recursive: true, force: true });
+
+    res.json({ success: true, id: projectId, message: `Project ${projectId} deleted` });
+  } catch (error) {
+    console.error('Error deleting project:', error);
+    res.status(500).json({ error: 'Failed to delete project' });
+  }
+});
+
+/**
+ * @openapi
+ * /api/projects/{id}/archive:
+ *   post:
+ *     summary: Archive a completed project
+ *     tags:
+ *       - Projects
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Project archived
+ *       404:
+ *         description: Project not found
+ */
+router.post('/:id/archive', async (req: Request<IdParams>, res: Response) => {
+  try {
+    const projectId = req.params.id;
+    const projectDir = path.join(PROJECTS_DIR, projectId);
+
+    // Check if project exists
+    const project = await loadProject(projectId);
+    if (!project) {
+      res.status(404).json({ error: 'Project not found' });
+      return;
+    }
+
+    // Ensure archives directory exists
+    await fs.mkdir(ARCHIVES_DIR, { recursive: true });
+
+    // Add archive event to history
+    const now = new Date().toISOString();
+    if (!project.history) project.history = [];
+    project.history.push({
+      type: 'archived',
+      phase: project.phase,
+      timestamp: now
+    });
+    project.archived = true;
+    project.archivedAt = now;
+    project.updated = now;
+
+    // Write updated project.json before moving
+    await fs.writeFile(
+      path.join(projectDir, 'project.json'),
+      JSON.stringify(project, null, 2)
+    );
+
+    // Move to archives
+    const archiveDir = path.join(ARCHIVES_DIR, projectId);
+    await fs.rename(projectDir, archiveDir);
+
+    res.json({
+      success: true,
+      id: projectId,
+      archivePath: archiveDir,
+      message: `Project ${projectId} archived`
+    });
+  } catch (error) {
+    console.error('Error archiving project:', error);
+    res.status(500).json({ error: 'Failed to archive project' });
+  }
+});
+
+/**
+ * @openapi
  * /api/projects:
  *   post:
  *     summary: Create a new project
@@ -275,7 +409,7 @@ router.patch('/:id', async (req: Request<IdParams>, res: Response) => {
  */
 router.post('/', async (req: Request, res: Response) => {
   try {
-    const { id, title, description, type, goal, workingDirectory } = req.body;
+    const { id, title, description, type, phase, goal, workingDirectory } = req.body;
 
     if (!id || !title) {
       res.status(400).json({ error: 'id and title are required' });
@@ -298,7 +432,7 @@ router.post('/', async (req: Request, res: Response) => {
       title,
       description: description || '',
       type: type || 'essay',
-      phase: 'research',
+      phase: phase || 'research',
       created: now,
       updated: now,
       goal: goal || '',
@@ -319,7 +453,12 @@ router.post('/', async (req: Request, res: Response) => {
         blockers: []
       },
       nextSteps: [],
-      notes: ''
+      notes: '',
+      history: [{
+        type: 'created',
+        phase: phase || 'research',
+        timestamp: now
+      }]
     };
 
     // Create project directory structure
@@ -389,8 +528,24 @@ router.patch('/:id/phase', async (req: Request<IdParams>, res: Response) => {
       return;
     }
 
+    const oldPhase = project.phase;
+    const now = new Date().toISOString();
+
+    // Initialize history array if it doesn't exist
+    if (!project.history) {
+      project.history = [];
+    }
+
+    // Record the phase transition
+    project.history.push({
+      type: 'phase-change',
+      from: oldPhase,
+      to: phase,
+      timestamp: now
+    });
+
     project.phase = phase;
-    project.updated = new Date().toISOString();
+    project.updated = now;
 
     const projectPath = path.join(PROJECTS_DIR, projectId, 'project.json');
     await fs.writeFile(projectPath, JSON.stringify(project, null, 2));
@@ -795,6 +950,50 @@ router.post('/launch', async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Error launching terminal:', error);
     res.status(500).json({ error: 'Failed to launch terminal' });
+  }
+});
+
+/**
+ * @openapi
+ * /api/projects/manifest:
+ *   post:
+ *     summary: Regenerate the projects manifest file
+ *     tags:
+ *       - Projects
+ *     responses:
+ *       200:
+ *         description: Manifest regenerated successfully
+ *       500:
+ *         description: Failed to regenerate manifest
+ */
+router.post('/manifest', async (_req: Request, res: Response) => {
+  try {
+    const projects = await loadAllProjects();
+
+    // Sort by phase order, then by updated date
+    projects.sort((a, b) => {
+      const phaseA = PHASE_ORDER.indexOf(a.phase);
+      const phaseB = PHASE_ORDER.indexOf(b.phase);
+      if (phaseA !== phaseB) return phaseA - phaseB;
+      return new Date(b.updated).getTime() - new Date(a.updated).getTime();
+    });
+
+    const manifest = {
+      generated: new Date().toISOString(),
+      count: projects.length,
+      projects: projects
+    };
+
+    await fs.writeFile(MANIFEST_PATH, JSON.stringify(manifest, null, 2));
+
+    res.json({
+      success: true,
+      path: MANIFEST_PATH,
+      count: projects.length
+    });
+  } catch (error) {
+    console.error('Error regenerating manifest:', error);
+    res.status(500).json({ error: 'Failed to regenerate manifest' });
   }
 });
 
