@@ -805,6 +805,90 @@ ${project.goal}
 
 /**
  * @openapi
+ * /api/projects/{id}/open-vault:
+ *   post:
+ *     summary: Open the project vault in Obsidian with the last edited file
+ *     tags:
+ *       - Projects
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Vault opened in Obsidian
+ */
+router.post('/:id/open-vault', async (req: Request<IdParams>, res: Response) => {
+  try {
+    const projectId = req.params.id;
+    const project = await loadProject(projectId);
+
+    if (!project) {
+      res.status(404).json({ error: 'Project not found' });
+      return;
+    }
+
+    const projectDir = path.join(PROJECTS_DIR, projectId);
+
+    // Find the most recently modified .md file in the project directory
+    const findLastEditedFile = async (dir: string): Promise<{ path: string; mtime: Date } | null> => {
+      let lastEdited: { path: string; mtime: Date } | null = null;
+
+      const scanDir = async (currentDir: string) => {
+        try {
+          const entries = await fs.readdir(currentDir, { withFileTypes: true });
+          for (const entry of entries) {
+            const fullPath = path.join(currentDir, entry.name);
+            if (entry.isDirectory() && !entry.name.startsWith('.')) {
+              await scanDir(fullPath);
+            } else if (entry.isFile() && entry.name.endsWith('.md')) {
+              const stat = await fs.stat(fullPath);
+              if (!lastEdited || stat.mtime > lastEdited.mtime) {
+                lastEdited = { path: fullPath, mtime: stat.mtime };
+              }
+            }
+          }
+        } catch {
+          // Ignore errors for inaccessible directories
+        }
+      };
+
+      await scanDir(dir);
+      return lastEdited;
+    };
+
+    const lastEdited = await findLastEditedFile(projectDir);
+
+    // Fall back to draft.md if no files found
+    const fileToOpen = lastEdited?.path || path.join(projectDir, 'draft.md');
+    const absolutePath = path.join(WORKSPACE_ROOT, 'writing-vault', 'projects', projectId, path.relative(projectDir, fileToOpen));
+
+    // Open in Obsidian
+    const { exec } = await import('child_process');
+    const obsidianUrl = `obsidian://open?path=${encodeURIComponent(absolutePath)}`;
+
+    exec(`open "${obsidianUrl}"`, (error) => {
+      if (error) {
+        console.error('Obsidian launch error:', error);
+        res.status(500).json({ error: error.message });
+        return;
+      }
+      res.json({
+        success: true,
+        openedFile: path.relative(projectDir, fileToOpen),
+        project: project.title
+      });
+    });
+  } catch (error) {
+    console.error('Error opening vault:', error);
+    res.status(500).json({ error: 'Failed to open vault' });
+  }
+});
+
+/**
+ * @openapi
  * /api/projects/{id}/add-research:
  *   post:
  *     summary: Create a new research file
