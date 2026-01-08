@@ -688,27 +688,18 @@ router.post('/open-in-obsidian', async (req: Request, res: Response) => {
 
     const { exec } = await import('child_process');
 
-    // Parse the path to extract vault and file
-    // Expected format: "writing-vault/path/to/file.md" or absolute path
-    let vaultName = 'writing-vault';
-    let fileInVault = filePath;
-
-    if (filePath.startsWith('writing-vault/')) {
-      vaultName = 'writing-vault';
-      fileInVault = filePath.substring('writing-vault/'.length);
-    } else if (filePath.startsWith('/')) {
-      // Absolute path - try to extract vault from path
-      const vaultPath = path.join(WORKSPACE_ROOT, 'writing-vault');
-      if (filePath.startsWith(vaultPath)) {
-        fileInVault = filePath.substring(vaultPath.length + 1);
-      }
+    // Build absolute path to the file
+    let absolutePath: string;
+    if (filePath.startsWith('/')) {
+      absolutePath = filePath;
+    } else if (filePath.startsWith('writing-vault/')) {
+      absolutePath = path.join(WORKSPACE_ROOT, filePath);
+    } else {
+      absolutePath = path.join(WORKSPACE_ROOT, 'writing-vault', filePath);
     }
 
-    // Remove .md extension for Obsidian URI (it adds it automatically)
-    const fileWithoutExt = fileInVault.replace(/\.md$/, '');
-
-    // Use Obsidian URI scheme
-    const obsidianUrl = `obsidian://open?vault=${encodeURIComponent(vaultName)}&file=${encodeURIComponent(fileWithoutExt)}`;
+    // Use Obsidian URI with path (more reliable than vault name)
+    const obsidianUrl = `obsidian://open?path=${encodeURIComponent(absolutePath)}`;
 
     exec(`open "${obsidianUrl}"`, (error) => {
       if (error) {
@@ -716,7 +707,7 @@ router.post('/open-in-obsidian', async (req: Request, res: Response) => {
         res.status(500).json({ error: error.message });
         return;
       }
-      res.json({ success: true, vault: vaultName, file: fileInVault });
+      res.json({ success: true, path: absolutePath });
     });
   } catch (error) {
     console.error('Error opening in Obsidian:', error);
@@ -788,11 +779,10 @@ ${project.goal}
       );
     }
 
-    // Open in Obsidian via URL scheme
+    // Open in Obsidian via URL scheme (using path for reliability)
     const { exec } = await import('child_process');
-    const vaultName = 'writing-vault';
-    const fileInVault = `projects/${projectId}/draft`;
-    const obsidianUrl = `obsidian://open?vault=${encodeURIComponent(vaultName)}&file=${encodeURIComponent(fileInVault)}`;
+    const absoluteDraftPath = path.join(WORKSPACE_ROOT, 'writing-vault', 'projects', projectId, 'draft.md');
+    const obsidianUrl = `obsidian://open?path=${encodeURIComponent(absoluteDraftPath)}`;
 
     exec(`open "${obsidianUrl}"`, (error) => {
       if (error) {
@@ -895,11 +885,10 @@ created: ${now}
 
     await fs.writeFile(filePath, fileContent);
 
-    // Open in Obsidian
+    // Open in Obsidian (using path for reliability)
     const { exec } = await import('child_process');
-    const vaultName = 'writing-vault';
-    const fileInVault = `projects/${projectId}/research/${safeName}`;
-    const obsidianUrl = `obsidian://open?vault=${encodeURIComponent(vaultName)}&file=${encodeURIComponent(fileInVault)}`;
+    const absoluteResearchPath = path.join(WORKSPACE_ROOT, 'writing-vault', 'projects', projectId, 'research', `${safeName}.md`);
+    const obsidianUrl = `obsidian://open?path=${encodeURIComponent(absoluteResearchPath)}`;
 
     exec(`open "${obsidianUrl}"`, (error) => {
       if (error) {
