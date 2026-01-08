@@ -1,0 +1,44 @@
+{
+  "sources": [
+    {
+      "id": "substack-newsletters",
+      "type": "newsletter",
+      "path": "/Users/tomparish/coding/substack-partner/sources/own-work/newsletters",
+      "label": "My Newsletters",
+      "description": "Published Substack newsletters",
+      "enabled": true
+    },
+    {
+      "id": "tgoyh-transcripts",
+      "type": "transcript",
+      "path": "/Users/tomparish/coding/substack-partner/sources/podcasts/tgoyh",
+      "label": "TGOYH Episodes",
+      "description": "Podcast transcripts from Things Getting on Your Homework",
+      "enabled": true
+    },
+    {
+      "id": "story-ideas",
+      "type": "story-idea",
+      "path": "/Users/tomparish/coding/substack-partner/sources/writing-articles-ideas-and-starts-for-new-piece",
+      "label": "Story Ideas",
+      "description": "Story idea files and writing starts",
+      "enabled": true
+    },
+    {
+      "id": "personal-stories",
+      "type": "personal",
+      "path": "/Users/tomparish/coding/personal",
+      "label": "Personal Stories",
+      "description": "Family stories, essays, and interviews",
+      "enabled": true
+    },
+    {
+      "id": "the-loop",
+      "type": "manuscript",
+      "path": "/Users/tomparish/coding/story-bible-the-loop",
+      "label": "The Loop",
+      "description": "Novella materials and story bible",
+      "enabled": true
+    }
+  ]
+}
